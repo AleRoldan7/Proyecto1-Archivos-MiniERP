@@ -1,3 +1,9 @@
 spring:
   application:
     name: Proyecto1-Archivos-MIniERP
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mini_erp_muebles
+    username: postgres
+    password: 010418
+
