@@ -12,7 +12,7 @@ public class ProductoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idProducto;
+    private Integer idProducto;
 
     private String nombreProducto;
 
