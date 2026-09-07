@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
@@ -62,7 +64,27 @@ public class UsuarioService {
         responseDTO.setNombreRol(usuarioGuardado.getRolEntity().getNombreRol());
 
         return responseDTO;
+    }
 
+    @Transactional
+    public List<UsuarioResponseDTO> listarUsuarios() {
 
+        return usuarioRepository.findAll().stream().map(usuario -> {
+            UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+
+            usuarioResponseDTO.setIdUsuario(usuario.getIdUsuario());
+            usuarioResponseDTO.setNombreUsuario(usuario.getNombreUsuario());
+            usuarioResponseDTO.setCorreoUsuario(usuario.getCorreoUsuario());
+            usuarioResponseDTO.setTelefonoUsuario(usuario.getTelefonoUsuario());
+            usuarioResponseDTO.setEstadoUsuario(usuario.isEstadoUsuario());
+            usuarioResponseDTO.setUserName(usuario.getUserName());
+
+            if (usuario.getRolEntity() != null) {
+                usuarioResponseDTO.setIdRol(usuario.getRolEntity().getIdRol());
+                usuarioResponseDTO.setNombreRol(usuario.getRolEntity().getNombreRol());
+            }
+            return usuarioResponseDTO;
+            
+        }).toList();
     }
 }

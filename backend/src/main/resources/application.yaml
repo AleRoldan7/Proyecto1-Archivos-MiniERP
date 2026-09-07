@@ -2,6 +2,10 @@ spring:
   application:
     name: Proyecto1-Archivos-MIniERP
 
+  mvc:
+    servlet:
+      path: "/api/v1"
+  
   datasource:
     url: jdbc:postgresql://localhost:5432/mini_erp_muebles
     username: postgres
