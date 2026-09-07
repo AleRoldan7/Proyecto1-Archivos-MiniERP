@@ -1,5 +1,7 @@
 package backend.proyecto1archivosminierp.usuario.service;
 
+import backend.proyecto1archivosminierp.usuario.dto.LoginRequestDTO;
+import backend.proyecto1archivosminierp.usuario.dto.LoginResponseDTO;
 import backend.proyecto1archivosminierp.usuario.dto.UsuarioRequestDTO;
 import backend.proyecto1archivosminierp.usuario.dto.UsuarioResponseDTO;
 import backend.proyecto1archivosminierp.usuario.entity.RolEntity;
@@ -21,6 +23,21 @@ public class UsuarioService {
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
 
+
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+
+        UsuarioEntity usuarioEntity = usuarioRepository.findByUserName(loginRequestDTO.getUserName()).orElseThrow((
+                () -> new RuntimeException("Usuario no encontrado")
+        ));
+
+        if (!passwordEncoder.matches(loginRequestDTO.getPassword(), usuarioEntity.getPassword())) {
+            throw new RuntimeException("Usuario o contraseña incorrecta");
+        }
+        return new LoginResponseDTO(usuarioEntity.getIdUsuario(), usuarioEntity.getUserName(), usuarioEntity.getRolEntity().getNombreRol(),
+                "Login exitoso");
+
+        
+    }
 
     @Transactional
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) {
@@ -84,7 +101,7 @@ public class UsuarioService {
                 usuarioResponseDTO.setNombreRol(usuario.getRolEntity().getNombreRol());
             }
             return usuarioResponseDTO;
-            
+
         }).toList();
     }
 }
