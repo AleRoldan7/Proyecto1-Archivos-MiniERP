@@ -30,13 +30,17 @@ public class UsuarioService {
                 () -> new RuntimeException("Usuario no encontrado")
         ));
 
+        if (!usuarioEntity.isEstadoUsuario()) {
+            throw new RuntimeException("El usuario está desactivado");
+        }
+
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), usuarioEntity.getPassword())) {
             throw new RuntimeException("Usuario o contraseña incorrecta");
         }
         return new LoginResponseDTO(usuarioEntity.getIdUsuario(), usuarioEntity.getUserName(), usuarioEntity.getRolEntity().getNombreRol(),
                 "Login exitoso");
 
-        
+
     }
 
     @Transactional

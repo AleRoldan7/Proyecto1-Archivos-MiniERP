@@ -36,6 +36,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/usuarios/login").permitAll()
                         .requestMatchers("/usuarios/crear").permitAll()
+
+                        /*RUTAS PERMITIDAS PARA EL ADMINISTRADOR*/
+                        .requestMatchers("/administracion/**").hasRole("ADMIN")
+
+                        /*RUTAS PERMITIDAS PARA EL INVENTARIO*/
+                        .requestMatchers("/inventario/**").hasRole("INVENTARIO")
+
+                        /*RUTAS PERMITIDAS PARA LAS COMPRAS*/
+                        .requestMatchers("/compras/**").hasRole("COMPRAS")
+
+                        /*RUTAS PERMITIDAS PARA LAS VENTAS*/
+                        .requestMatchers("/ventas/**").hasRole("VENTAS")
+
                         .anyRequest().authenticated()
                 );
 
