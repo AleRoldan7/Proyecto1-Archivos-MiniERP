@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { LoginUsuario } from '../../models/login-model';
 import { UsuarioResponse } from '../../models/usuario-response';
 import { Observable } from 'rxjs';
+import { LoginResponse } from '../../models/login-response';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class LoginService {
 
 
 
-  loginUsuario(data: LoginUsuario): Observable<UsuarioResponse> {
-    return this.httpClient.post<UsuarioResponse>(`${this.restConstants.getApiUrl()}usuario/login`, data);
+  loginUsuario(data: LoginUsuario): Observable<LoginResponse> {
+    return this.httpClient.post<LoginResponse>(`${this.restConstants.getApiUrl()}usuarios/login`, data);
   }
 }

@@ -1,0 +1,62 @@
+<div class="dashboard">
+
+  <header class="topbar">
+
+    <div>
+      <h1>Administración</h1>
+      <span>Panel de administración del sistema jajajajaj</span>
+    </div>
+
+    <button (click)="cerrarSesion()">
+      Cerrar sesión
+    </button>
+
+  </header>
+
+  <main>
+
+    <section class="bienvenida">
+
+      <h2>
+        Bienvenido,
+        {{ usuario?.nombreUsuario }}
+      </h2>
+
+      <p>
+        Desde este panel puede supervisar
+        el funcionamiento general del Mini ERP.
+      </p>
+
+    </section>
+
+    <section class="cards">
+
+      <article class="card">
+        <h3>Usuarios</h3>
+        <p>Administración de usuarios del sistema.</p>
+        <button>Gestionar</button>
+      </article>
+
+      <article class="card">
+        <h3>Productos</h3>
+        <p>Consulta general de productos.</p>
+        <button>Consultar</button>
+      </article>
+
+      <article class="card">
+        <h3>Compras</h3>
+        <p>Consulta las operaciones de compras.</p>
+        <button>Consultar</button>
+      </article>
+
+      <article class="card">
+        <h3>Ventas</h3>
+        <p>Consulta las operaciones de ventas.</p>
+        <button>Consultar</button>
+      </article>
+
+    </section>
+
+  </main>
+
+</div>

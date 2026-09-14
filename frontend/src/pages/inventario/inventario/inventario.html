@@ -1,0 +1,62 @@
+<div class="dashboard">
+
+  <header class="topbar">
+
+    <div>
+      <h1>Inventario</h1>
+      <span>Control de existencias y movimientos</span>
+    </div>
+
+    <button (click)="cerrarSesion()">
+      Cerrar sesión
+    </button>
+
+  </header>
+
+  <main>
+
+    <section class="bienvenida">
+
+      <h2>
+        Bienvenido,
+        {{ usuario?.nombreUsuario }}
+      </h2>
+
+      <p>
+        Controle las existencias y movimientos
+        de productos del sistema.
+      </p>
+
+    </section>
+
+    <section class="cards">
+
+      <article class="card">
+        <h3>Existencias</h3>
+        <p>Consultar productos disponibles.</p>
+        <button>Consultar</button>
+      </article>
+
+      <article class="card">
+        <h3>Movimientos</h3>
+        <p>Registrar entradas y salidas.</p>
+        <button>Ingresar</button>
+      </article>
+
+      <article class="card">
+        <h3>Kardex</h3>
+        <p>Consultar historial de movimientos.</p>
+        <button>Consultar</button>
+      </article>
+
+      <article class="card">
+        <h3>Valorización</h3>
+        <p>Control de inventario mediante PEPS.</p>
+        <button>Consultar</button>
+      </article>
+
+    </section>
+
+  </main>
+
+</div>

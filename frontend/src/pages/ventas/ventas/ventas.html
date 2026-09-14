@@ -1,0 +1,62 @@
+<div class="dashboard">
+
+  <header class="topbar">
+
+    <div>
+      <h1>Ventas</h1>
+      <span>Módulo de comercialización</span>
+    </div>
+
+    <button (click)="cerrarSesion()">
+      Cerrar sesión
+    </button>
+
+  </header>
+
+  <main>
+
+    <section class="bienvenida">
+
+      <h2>
+        Bienvenido,
+        {{ usuario?.nombreUsuario }}
+      </h2>
+
+      <p>
+        Gestione las operaciones relacionadas
+        con la comercialización de productos.
+      </p>
+
+    </section>
+
+    <section class="cards">
+
+      <article class="card">
+        <h3>Clientes</h3>
+        <p>Gestionar clientes.</p>
+        <button>Ingresar</button>
+      </article>
+
+      <article class="card">
+        <h3>Nueva venta</h3>
+        <p>Registrar una nueva venta.</p>
+        <button>Ingresar</button>
+      </article>
+
+      <article class="card">
+        <h3>Ventas</h3>
+        <p>Consultar ventas realizadas.</p>
+        <button>Consultar</button>
+      </article>
+
+      <article class="card">
+        <h3>Productos</h3>
+        <p>Consultar productos disponibles.</p>
+        <button>Consultar</button>
+      </article>
+
+    </section>
+
+  </main>
+
+</div>

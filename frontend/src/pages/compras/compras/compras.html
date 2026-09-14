@@ -1,0 +1,56 @@
+<div class="dashboard">
+
+  <header class="topbar">
+
+    <div>
+      <h1>Compras</h1>
+      <span>Módulo de abastecimiento</span>
+    </div>
+
+    <button (click)="cerrarSesion()">
+      Cerrar sesión
+    </button>
+
+  </header>
+
+  <main>
+
+    <section class="bienvenida">
+
+      <h2>
+        Bienvenido,
+        {{ usuario?.nombreUsuario }}
+      </h2>
+
+      <p>
+        Gestione las actividades relacionadas
+        con el abastecimiento de productos.
+      </p>
+
+    </section>
+
+    <section class="cards">
+
+      <article class="card">
+        <h3>Proveedores</h3>
+        <p>Gestionar proveedores.</p>
+        <button>Ingresar</button>
+      </article>
+
+      <article class="card">
+        <h3>Compras</h3>
+        <p>Registrar y consultar compras.</p>
+        <button>Ingresar</button>
+      </article>
+
+      <article class="card">
+        <h3>Productos</h3>
+        <p>Consultar productos disponibles.</p>
+        <button>Consultar</button>
+      </article>
+
+    </section>
+
+  </main>
+
+</div>
