@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lote_inventario")
@@ -35,5 +35,5 @@ public class LoteInventarioEntity {
     private BigDecimal precioUnitario;
 
     @Column(name = "fecha_entrada", nullable = false)
-    private LocalDate fechaEntrada;
+    private LocalDateTime fechaEntrada;
 }
