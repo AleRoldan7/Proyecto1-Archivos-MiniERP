@@ -27,8 +27,7 @@ public class UsuarioService {
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
         UsuarioEntity usuarioEntity = usuarioRepository.findByUserName(loginRequestDTO.getUserName()).orElseThrow((
-                () -> new RuntimeException("Usuario no encontrado")
-        ));
+                () -> new RuntimeException("Usuario no encontrado")));
 
         if (!usuarioEntity.isEstadoUsuario()) {
             throw new RuntimeException("El usuario está desactivado");

@@ -22,23 +22,10 @@ public class CustomUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        UsuarioEntity usuario = usuarioRepository
-                .findByUserName(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                "Usuario no encontrado"
-                        )
-                );
+        UsuarioEntity usuario = usuarioRepository.findByUserName(username).orElseThrow(() ->
+                new UsernameNotFoundException("Usuario no encontrado"));
 
-        return User.builder()
-                .username(usuario.getUserName())
-                .password(usuario.getPassword())
-                .authorities(
-                        new SimpleGrantedAuthority(
-                                "ROLE_" + usuario.getRolEntity().getNombreRol()
-                        )
-                )
-                .disabled(!usuario.isEstadoUsuario())
-                .build();
+        return User.builder().username(usuario.getUserName()).password(usuario.getPassword()).authorities(new SimpleGrantedAuthority(
+                "ROLE_" + usuario.getRolEntity().getNombreRol())).disabled(!usuario.isEstadoUsuario()).build();
     }
 }

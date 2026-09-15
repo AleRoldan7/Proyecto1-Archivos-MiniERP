@@ -23,19 +23,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .cors(cors -> {
-                })
-                .csrf(csrf -> csrf.disable())
+        http.cors(cors -> {
 
-                .userDetailsService(customUserService)
+                }).csrf(csrf -> csrf.disable()).userDetailsService(customUserService)
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/usuarios/login").permitAll()
                         .requestMatchers("/usuarios/crear").permitAll()
+                        .requestMatchers("/usuarios/lista").permitAll()
 
                         /*RUTAS PERMITIDAS PARA EL ADMINISTRADOR*/
                         .requestMatchers("/administracion/**").hasRole("ADMIN")
