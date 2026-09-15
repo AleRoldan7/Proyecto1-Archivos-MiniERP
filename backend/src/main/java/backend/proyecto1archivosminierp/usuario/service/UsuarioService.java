@@ -1,5 +1,7 @@
 package backend.proyecto1archivosminierp.usuario.service;
 
+import backend.proyecto1archivosminierp.configuracion.JwtService;
+import backend.proyecto1archivosminierp.excepciones.DatosNoEncontrados;
 import backend.proyecto1archivosminierp.usuario.dto.LoginRequestDTO;
 import backend.proyecto1archivosminierp.usuario.dto.LoginResponseDTO;
 import backend.proyecto1archivosminierp.usuario.dto.UsuarioRequestDTO;
@@ -9,6 +11,8 @@ import backend.proyecto1archivosminierp.usuario.entity.UsuarioEntity;
 import backend.proyecto1archivosminierp.usuario.repository.RolRepository;
 import backend.proyecto1archivosminierp.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,24 +26,38 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final JwtService jwtService;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
         UsuarioEntity usuarioEntity = usuarioRepository.findByUserName(loginRequestDTO.getUserName()).orElseThrow((
-                () -> new RuntimeException("Usuario no encontrado")));
+                () -> new DatosNoEncontrados("Usuario no encontrado")));
 
         if (!usuarioEntity.isEstadoUsuario()) {
-            throw new RuntimeException("El usuario está desactivado");
+            throw new DatosNoEncontrados("El usuario está desactivado");
         }
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), usuarioEntity.getPassword())) {
-            throw new RuntimeException("Usuario o contraseña incorrecta");
+            throw new DatosNoEncontrados("Usuario o contraseña incorrecta");
         }
+
+        UserDetails userDetails = User
+                .builder()
+                .username(usuarioEntity.getUserName())
+                .password(usuarioEntity.getPassword())
+                .authorities("ROLE_" + usuarioEntity.getRolEntity().getNombreRol())
+                .disabled(!usuarioEntity.isEstadoUsuario())
+                .build();
+
+        /*
+         * Generamos JWT
+         */
+        String token = jwtService.generateToken(userDetails);
+
         return new LoginResponseDTO(usuarioEntity.getIdUsuario(), usuarioEntity.getUserName(), usuarioEntity.getRolEntity().getNombreRol(),
-                "Login exitoso");
-
-
+                "Login exitoso",
+                token
+        );
     }
 
     @Transactional

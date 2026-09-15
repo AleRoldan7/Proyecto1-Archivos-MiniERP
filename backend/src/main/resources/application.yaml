@@ -25,3 +25,7 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
     repair-on-migrate: true
+
+jwt:
+  secret: "MiniERP-JWT-Secret-Key-Proyecto-Archivos-Segundo-Semestre"
+  expiration: 3600000
