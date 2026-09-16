@@ -2,6 +2,7 @@ package backend.proyecto1archivosminierp.proveedor.service;
 
 import backend.proyecto1archivosminierp.crud.Crud;
 import backend.proyecto1archivosminierp.excepciones.DatosInvalidos;
+import backend.proyecto1archivosminierp.excepciones.DatosNoEncontrados;
 import backend.proyecto1archivosminierp.proveedor.dto.ProveedorRequestDTO;
 import backend.proyecto1archivosminierp.proveedor.dto.ProveedorResponseDTO;
 import backend.proyecto1archivosminierp.proveedor.entity.ProveedorEntity;
@@ -51,10 +52,10 @@ public class ProveedorService implements Crud<ProveedorRequestDTO, ProveedorResp
     }
 
     @Override
-    public ProveedorResponseDTO update(Integer integer, ProveedorRequestDTO proveedorRequestDTO) {
+    public ProveedorResponseDTO update(Integer id, ProveedorRequestDTO proveedorRequestDTO) {
 
-        ProveedorEntity proveedorEntity = proveedorRepository.findById(integer).orElseThrow(()
-                -> new RuntimeException("No existe el proveedor con el id: " + integer));
+        ProveedorEntity proveedorEntity = proveedorRepository.findById(id).orElseThrow(()
+                -> new DatosNoEncontrados("No existe el proveedor con el id: " + id));
 
 
         proveedorEntity.setNombreProveedor(proveedorRequestDTO.getNombreProveedor());
@@ -75,7 +76,7 @@ public class ProveedorService implements Crud<ProveedorRequestDTO, ProveedorResp
     public ProveedorResponseDTO getById(Integer integer) {
 
         ProveedorEntity proveedorEntity = proveedorRepository.findById(integer).orElseThrow(()
-                -> new RuntimeException("No existe el proveedor con el id: " + integer));
+                -> new DatosNoEncontrados("No existe el proveedor con el id: " + integer));
 
         return devuelveProveedor(proveedorEntity);
     }
@@ -89,7 +90,7 @@ public class ProveedorService implements Crud<ProveedorRequestDTO, ProveedorResp
     public void delete(Integer integer) {
 
         ProveedorEntity proveedorEntity = proveedorRepository.findById(integer).orElseThrow(()
-                -> new RuntimeException("No existe el proveedor con el id: " + integer));
+                -> new DatosNoEncontrados("No existe el proveedor con el id: " + integer));
 
         proveedorRepository.delete(proveedorEntity);
     }

@@ -88,7 +88,6 @@ public class CompraService implements Crud<CompraRequestDTO, CompraResponseDTO, 
     @Override
     public CompraResponseDTO update(Integer integer, CompraRequestDTO compraRequestDTO) {
         throw new OperacionInvalida("No se puede modificar una compra que ya se registro");
-
     }
 
     @Override

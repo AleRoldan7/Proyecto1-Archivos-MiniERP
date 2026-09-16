@@ -26,7 +26,7 @@ public class UsuarioEntity {
     //@Column(nullable = false)
     private boolean estadoUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", nullable = false)
     private RolEntity rolEntity;
 
