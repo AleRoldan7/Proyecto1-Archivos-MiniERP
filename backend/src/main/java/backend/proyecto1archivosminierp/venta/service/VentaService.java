@@ -85,18 +85,18 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
         throw new OperacionInvalida("No se puede eliminar una venta que ya se registro");
     }
 
-    private void validarVenta(VentaRequestDTO ventaRequestDTO) throws DatosInvalidos {
+    private void validarVenta(VentaRequestDTO ventaRequestDTO) {
 
         if (ventaRequestDTO == null) {
-            new DatosInvalidos("Los datos para una venta son obligatorios");
+            throw new DatosInvalidos("Los datos para una venta son obligatorios");
         }
 
         if (ventaRequestDTO.getIdCliente() == null) {
-            new DatosInvalidos("Debe de seleccionar un cliente");
+            throw new DatosInvalidos("Debe de seleccionar un cliente");
         }
 
         if (ventaRequestDTO.getDetalles() == null || ventaRequestDTO.getDetalles().isEmpty()) {
-            new DatosInvalidos("La venta debe tener al menos un producto");
+            throw new DatosInvalidos("La venta debe tener al menos un producto");
         }
 
         for (DetalleVentaRequestDTO detalle : ventaRequestDTO.getDetalles()) {
@@ -104,22 +104,22 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
         }
     }
 
-    private void validarDetalle(DetalleVentaRequestDTO detalleVentaRequestDTO) throws DatosInvalidos {
+    private void validarDetalle(DetalleVentaRequestDTO detalleVentaRequestDTO) {
 
         if (detalleVentaRequestDTO == null) {
-            new DatosInvalidos("El detalle de venta no puede ser nulo");
+            throw new DatosInvalidos("El detalle de venta no puede ser nulo");
         }
 
         if (detalleVentaRequestDTO.getIdProducto() == null) {
-            new DatosInvalidos("Debe seleccionar un producto");
+            throw new DatosInvalidos("Debe seleccionar un producto");
         }
 
         if (detalleVentaRequestDTO.getCantidad() == null || detalleVentaRequestDTO.getCantidad() <= 0) {
-            new DatosInvalidos("La cantidad debe ser mayor que cero");
+            throw new DatosInvalidos("La cantidad debe ser mayor que cero");
         }
 
         if (detalleVentaRequestDTO.getPrecioUnitario() == null || detalleVentaRequestDTO.getPrecioUnitario().compareTo(BigDecimal.ZERO) <= 0) {
-            new DatosInvalidos("El precio unitario debe ser mayor que cero");
+            throw new DatosInvalidos("El precio unitario debe ser mayor que cero");
         }
 
     }
@@ -128,7 +128,7 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
         return clienteRepository.findById(idCliente).orElseThrow(() -> new DatosInvalidos("El cliente no existe con id " + idCliente));
     }
 
-    private ProductoEntity buscarProducto(Long idProducto) {
+    private ProductoEntity buscarProducto(Integer idProducto) {
         return productoRepository.findById(idProducto).orElseThrow(()
                 -> new DatosNoEncontrados("No existe el producto con el id " + idProducto));
     }
@@ -168,7 +168,7 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
 
         for (DetalleVentaRequestDTO detalleVentaRequestDTO : detallesRequest) {
 
-            ProductoEntity producto = buscarProducto(Long.valueOf(detalleVentaRequestDTO.getIdProducto()));
+            ProductoEntity producto = buscarProducto(detalleVentaRequestDTO.getIdProducto());
 
             descontarInventarioPEPS(producto, detalleVentaRequestDTO.getCantidad(), ventaEntity);
 

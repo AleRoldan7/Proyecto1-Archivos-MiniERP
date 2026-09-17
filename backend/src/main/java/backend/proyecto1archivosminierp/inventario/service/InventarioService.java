@@ -26,14 +26,15 @@ public class InventarioService implements Crud<InventarioRequestDTO, InventarioR
     @Override
     @Transactional
     public InventarioResponseDTO create(InventarioRequestDTO inventarioRequestDTO) {
-        throw new DatosNoEncontrados("El invnetario se genera cuando se comprar productos");
+        throw new OperacionInvalida("El inventario se genera cuando se compran productos");
     }
 
     @Override
+    @Transactional
     public InventarioResponseDTO update(Integer idInventario, InventarioRequestDTO inventarioRequestDTO) {
 
         InventarioEntity inventarioEntity = inventarioRepository.findById(idInventario)
-                .orElseThrow(() -> new DatosNoEncontrados("El invnetario no existe con id" + idInventario));
+                .orElseThrow(() -> new DatosNoEncontrados("El inventario no existe con id" + idInventario));
 
         inventarioEntity.setStockMinimo(inventarioRequestDTO.getStockMinimo());
 
@@ -46,7 +47,7 @@ public class InventarioService implements Crud<InventarioRequestDTO, InventarioR
     public InventarioResponseDTO getById(Integer idInventario) {
 
         InventarioEntity inventarioEntity = inventarioRepository.findById(idInventario)
-                .orElseThrow(() -> new DatosNoEncontrados("El invnetario no existe con id" + idInventario));
+                .orElseThrow(() -> new DatosNoEncontrados("El inventario no existe con id" + idInventario));
 
         return devuelveInventario(inventarioEntity);
     }

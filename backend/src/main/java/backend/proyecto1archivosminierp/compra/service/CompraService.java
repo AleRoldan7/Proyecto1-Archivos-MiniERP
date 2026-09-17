@@ -52,7 +52,7 @@ public class CompraService implements Crud<CompraRequestDTO, CompraResponseDTO, 
 
         for (DetalleRequestDTO detalleDTO : compraRequestDTO.getDetalles()) {
 
-            ProductoEntity producto = productoRepository.findById(Long.valueOf(detalleDTO.getIdProducto()))
+            ProductoEntity producto = productoRepository.findById(detalleDTO.getIdProducto())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + detalleDTO.getIdProducto()));
 
             DetalleCompraEntity detalleCompraEntity = new DetalleCompraEntity();

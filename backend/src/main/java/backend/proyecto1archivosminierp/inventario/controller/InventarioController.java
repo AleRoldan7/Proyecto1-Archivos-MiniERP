@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/inventario")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('INVENTARIO')")
+@PreAuthorize("hasAnyRole('INVENTARIO','ADMIN')")
 public class InventarioController {
 
     private final InventarioService inventarioService;
@@ -25,7 +25,7 @@ public class InventarioController {
         return ResponseEntity.ok(inventarioService.getAll());
     }
 
-    @GetMapping("//{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<InventarioResponseDTO> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(inventarioService.getById(id));
     }

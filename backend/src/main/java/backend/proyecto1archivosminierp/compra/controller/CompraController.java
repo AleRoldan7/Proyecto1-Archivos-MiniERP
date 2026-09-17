@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/compras")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('COMPRAS')")
+@PreAuthorize("hasAnyRole('COMPRAS', 'ADMIN')")
 public class CompraController {
 
     private final CompraService compraService;

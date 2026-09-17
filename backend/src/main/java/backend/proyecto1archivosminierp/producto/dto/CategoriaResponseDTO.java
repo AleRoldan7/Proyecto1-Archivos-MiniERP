@@ -10,4 +10,5 @@ public class CategoriaResponseDTO {
     private Integer idCategoria;
     private String nombreCategoria;
     private String descripcion;
+    private Long totalProductos;
 }
