@@ -30,6 +30,7 @@ public class ProveedorController {
         return ResponseEntity.status(HttpStatus.OK).body(proveedorService.getById(id));
     }
 
+
     @GetMapping("/lista-proveedores")
     public ResponseEntity<List<ProveedorResponseDTO>> getAllProveedores() {
         return ResponseEntity.status(HttpStatus.OK).body(proveedorService.getAll());
