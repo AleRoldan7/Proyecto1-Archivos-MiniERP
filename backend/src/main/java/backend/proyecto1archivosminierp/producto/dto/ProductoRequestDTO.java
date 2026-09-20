@@ -20,10 +20,7 @@ public class ProductoRequestDTO {
 
     @NotNull(message = "Debe seleccionar una categoría")
     private Integer idCategoria;
-
-    /**
-     * Solo se usa al crear: inicializa el stock mínimo del inventario.
-     */
+    
     @Min(value = 0, message = "El stock mínimo no puede ser negativo")
     private Integer stockMinimo;
 }

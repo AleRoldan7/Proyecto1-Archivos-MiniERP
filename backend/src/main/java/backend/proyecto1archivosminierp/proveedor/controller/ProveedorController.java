@@ -15,33 +15,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/proveedores")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
 public class ProveedorController {
 
     private final ProveedorService proveedorService;
 
     @PostMapping("/crear-proveedor")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<ProveedorResponseDTO> crearProveedor(@Valid @RequestBody ProveedorRequestDTO proveedorRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proveedorService.create(proveedorRequestDTO));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<ProveedorResponseDTO> getById(@PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(proveedorService.getById(id));
     }
 
 
     @GetMapping("/lista-proveedores")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<List<ProveedorResponseDTO>> getAllProveedores() {
         return ResponseEntity.status(HttpStatus.OK).body(proveedorService.getAll());
     }
 
     @PutMapping("/actualizar-proveedor/{id}")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<ProveedorResponseDTO> actualizarProveedor(@PathVariable Integer id, @Valid @RequestBody ProveedorRequestDTO proveedorRequestDTO) {
         return ResponseEntity.ok(proveedorService.update(id, proveedorRequestDTO));
     }
 
     @DeleteMapping("/eliminar/{id}")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<Void> eliminarProveedor(@PathVariable Integer id) {
         proveedorService.delete(id);
         return ResponseEntity.noContent().build();
