@@ -3,9 +3,9 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
-import { LoginUsuario } from '../../../models/login-model';
-import { LoginService } from '../../../service/login-service/login.service';
-import { LoginResponse } from '../../../models/login-response';
+import { LoginRequest } from '../../../models/login/login-request';
+import { LoginResponse } from '../../../models/login/login-response';
+import { AuthService } from '../../../service/auth-service/auth.service';
 
 @Component({
   selector: 'app-login-sistema',
@@ -18,63 +18,44 @@ export class LoginSistema {
   userName: string = '';
   password: string = '';
 
-  mensaje: string = '';
-  loginExitoso: boolean = false;
+  constructor(private authService: AuthService, private router: Router) { }
 
-  constructor(private usuarioService: LoginService, private router: Router) { }
-
-  login() {
-    const data: LoginUsuario = {
-      userName: this.userName,
-      password: this.password,
-    };
-
-    this.usuarioService.loginUsuario(data).subscribe({
-      next: (resp: LoginResponse) => {
-        localStorage.setItem('usuario', JSON.stringify(resp));
-
-        this.mensaje = 'Login exitoso - Bienvenido ' + (resp.username);
-
-        this.loginExitoso = true;
-
-        this.redireccionar(resp.rol);
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de autenticación',
-          text: 'Credenciales incorrectas. Por favor, inténtelo de nuevo.',
-        });
-        this.mensaje = 'Credenciales incorrectas';
-        this.loginExitoso = false;
-        console.error(err);
-      },
-    });
+  login(): void {
+    this.authService.login({ userName: this.userName, password: this.password })
+      .subscribe({
+        next: (resp) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Login exitoso',
+            text: `Bienvenido ${resp.username}`,
+            timer: 1500,
+            showConfirmButton: false
+          });
+          this.redireccionar(resp.rol);
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de autenticación',
+            text: 'Credenciales incorrectas. Inténtelo de nuevo.',
+          });
+          console.error(err);
+        }
+      });
   }
 
   private redireccionar(rol: string): void {
-
     switch (rol.toUpperCase()) {
-
-      case 'ADMIN':
-        this.router.navigate(['/administracion']);
-        break;
-
-      case 'COMPRAS':
-        this.router.navigate(['/compras']);
-        break;
-
-      case 'INVENTARIO':
-        this.router.navigate(['/inventario']);
-        break;
-
-      case 'VENTAS':
-        this.router.navigate(['/ventas']);
-        break;
-
+      case 'ADMIN':      this.router.navigate(['/administracion']); break;
+      case 'COMPRAS':    this.router.navigate(['/compras']); break;
+      case 'INVENTARIO': this.router.navigate(['/inventario']); break;
+      case 'VENTAS':     this.router.navigate(['/ventas']); break;
       default:
-        Swal.fire({ icon: 'error', title: 'Rol no reconocido', text: `El rol ${rol} no está configurado en el sistema.`, });
-        break;
+        Swal.fire({
+          icon: 'error',
+          title: 'Rol no reconocido',
+          text: `El rol ${rol} no está configurado.`,
+        });
     }
   }
 }

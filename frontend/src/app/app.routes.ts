@@ -4,6 +4,7 @@ import { Administrador } from '../pages/admin/administrador/administrador';
 import { Compras } from '../pages/compras/compras/compras';
 import { Inventario } from '../pages/inventario/inventario/inventario';
 import { Ventas } from '../pages/ventas/ventas/ventas';
+import { Proveedor } from '../components/proveedor/proveedor';
 
 export const routes: Routes = [
 
@@ -31,6 +32,11 @@ export const routes: Routes = [
     {
         path: 'ventas',
         component: Ventas
+    },
+
+    {
+        path: 'proveedores',
+        component: Proveedor
     },
 
     {

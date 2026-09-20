@@ -1,0 +1,1 @@
+export type RolUsuario = 'ADMIN' | 'COMPRAS' | 'INVENTARIO' | 'VENTAS';

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-administrador',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './administrador.html',
   styleUrl: './administrador.css',
 })

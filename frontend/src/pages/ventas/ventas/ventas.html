@@ -1,59 +1,274 @@
-<div class="dashboard">
+<div class="min-h-screen bg-slate-100">
 
-  <header class="topbar">
+  <!-- HEADER -->
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-    <div>
-      <h1>Ventas</h1>
-      <span>Módulo de comercialización</span>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">
+          MiniERP
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Panel de Ventas
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <div class="text-right">
+          <p class="text-sm font-semibold text-slate-800">
+            Usuario de Ventas
+          </p>
+
+          <p class="text-xs text-slate-500">
+            Ventas
+          </p>
+        </div>
+
+        <div
+          class="flex h-10 w-10 items-center justify-center
+                 rounded-full bg-emerald-600 font-bold text-white">
+          V
+        </div>
+
+      </div>
+
     </div>
-
-    <button (click)="cerrarSesion()">
-      Cerrar sesión
-    </button>
-
   </header>
 
-  <main>
 
-    <section class="bienvenida">
+  <main class="mx-auto max-w-7xl px-6 py-8">
 
-      <h2>
-        Bienvenido,
-        {{ usuario?.nombreUsuario }}
+    <!-- BIENVENIDA -->
+    <section class="mb-8">
+
+      <h2 class="text-3xl font-bold text-slate-900">
+        Gestión de Ventas
       </h2>
 
-      <p>
-        Gestione las operaciones relacionadas
-        con la comercialización de productos.
+      <p class="mt-2 text-slate-500">
+        Registra ventas, administra clientes y genera facturas.
       </p>
 
     </section>
 
-    <section class="cards">
 
-      <article class="card">
-        <h3>Clientes</h3>
-        <p>Gestionar clientes.</p>
-        <button>Ingresar</button>
-      </article>
+    <!-- ESTADÍSTICAS -->
+    <section class="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
-      <article class="card">
-        <h3>Nueva venta</h3>
-        <p>Registrar una nueva venta.</p>
-        <button>Ingresar</button>
-      </article>
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
-      <article class="card">
-        <h3>Ventas</h3>
-        <p>Consultar ventas realizadas.</p>
-        <button>Consultar</button>
-      </article>
+        <p class="text-sm text-slate-500">
+          Ventas realizadas
+        </p>
 
-      <article class="card">
-        <h3>Productos</h3>
-        <p>Consultar productos disponibles.</p>
-        <button>Consultar</button>
-      </article>
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          25
+        </p>
+
+      </div>
+
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Clientes
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          20
+        </p>
+
+      </div>
+
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Ventas del mes
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          Q 24,850
+        </p>
+
+      </div>
+
+
+      <div class="rounded-xl border border-emerald-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Ventas de hoy
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-emerald-600">
+          Q 2,450
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ACCIONES -->
+    <section>
+
+      <div class="mb-5">
+
+        <h2 class="text-xl font-bold text-slate-900">
+          Acciones de ventas
+        </h2>
+
+      </div>
+
+
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+
+        <!-- NUEVA VENTA -->
+        <a
+          routerLink="/ventas/nueva"
+          class="rounded-xl border border-emerald-200
+                 bg-emerald-600 p-6 text-white shadow-sm
+                 transition hover:-translate-y-1
+                 hover:bg-emerald-700">
+
+          <div class="mb-4 text-3xl">
+            💰
+          </div>
+
+          <h3 class="font-semibold">
+            Registrar venta
+          </h3>
+
+          <p class="mt-2 text-sm text-emerald-100">
+            Registra una nueva venta de productos.
+          </p>
+
+        </a>
+
+
+        <!-- CLIENTES -->
+        <a
+          routerLink="/clientes"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-emerald-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-blue-50 text-2xl">
+            👥
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Clientes
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Registrar y consultar información de clientes.
+          </p>
+
+        </a>
+
+
+        <!-- PRODUCTOS -->
+        <a
+          routerLink="/productos"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-emerald-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-teal-50 text-2xl">
+            📦
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Productos
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consulta disponibilidad de productos.
+          </p>
+
+        </a>
+
+
+        <!-- HISTORIAL -->
+        <a
+          routerLink="/ventas/historial"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-emerald-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-purple-50 text-2xl">
+            📋
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Historial de ventas
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consulta las ventas realizadas.
+          </p>
+
+        </a>
+
+
+        <!-- FACTURAS -->
+        <a
+          routerLink="/ventas/facturas"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-emerald-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-rose-50 text-2xl">
+            🧾
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Facturas
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consulta y genera facturas de las ventas.
+          </p>
+
+        </a>
+
+
+        <!-- REPORTES -->
+        <a
+          routerLink="/reportes/ventas"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-emerald-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-amber-50 text-2xl">
+            📈
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Reportes de ventas
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consulta estadísticas de ventas y clientes.
+          </p>
+
+        </a>
+
+      </div>
 
     </section>
 

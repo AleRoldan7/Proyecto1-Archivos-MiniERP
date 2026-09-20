@@ -1,59 +1,301 @@
-<div class="dashboard">
+<div class="min-h-screen bg-slate-100">
 
-  <header class="topbar">
+  <!-- HEADER -->
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-    <div>
-      <h1>Administración</h1>
-      <span>Panel de administración del sistema jajajajaj</span>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">
+          MiniERP
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Panel de Administración
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <div class="text-right">
+          <p class="text-sm font-semibold text-slate-800">
+            Administrador
+          </p>
+
+          <p class="text-xs text-slate-500">
+            Administración
+          </p>
+        </div>
+
+        <div
+          class="flex h-10 w-10 items-center justify-center
+                 rounded-full bg-teal-600 font-bold text-white">
+          A
+        </div>
+
+      </div>
+
     </div>
-
-    <button (click)="cerrarSesion()">
-      Cerrar sesión
-    </button>
-
   </header>
 
-  <main>
 
-    <section class="bienvenida">
+  <!-- CONTENIDO -->
+  <main class="mx-auto max-w-7xl px-6 py-8">
 
-      <h2>
-        Bienvenido,
-        {{ usuario?.nombreUsuario }}
+    <!-- BIENVENIDA -->
+    <section class="mb-8">
+
+      <h2 class="text-3xl font-bold text-slate-900">
+        Bienvenido, Administrador
       </h2>
 
-      <p>
-        Desde este panel puede supervisar
-        el funcionamiento general del Mini ERP.
+      <p class="mt-2 text-slate-500">
+        Supervisa las operaciones y el estado general del negocio.
       </p>
 
     </section>
 
-    <section class="cards">
 
-      <article class="card">
-        <h3>Usuarios</h3>
-        <p>Administración de usuarios del sistema.</p>
-        <button>Gestionar</button>
-      </article>
+    <!-- RESUMEN -->
+    <section class="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
-      <article class="card">
-        <h3>Productos</h3>
-        <p>Consulta general de productos.</p>
-        <button>Consultar</button>
-      </article>
+      <!-- Productos -->
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
-      <article class="card">
-        <h3>Compras</h3>
-        <p>Consulta las operaciones de compras.</p>
-        <button>Consultar</button>
-      </article>
+        <p class="text-sm text-slate-500">
+          Productos
+        </p>
 
-      <article class="card">
-        <h3>Ventas</h3>
-        <p>Consulta las operaciones de ventas.</p>
-        <button>Consultar</button>
-      </article>
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          30
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Productos registrados
+        </p>
+
+      </div>
+
+
+      <!-- Proveedores -->
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Proveedores
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          8
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Proveedores registrados
+        </p>
+
+      </div>
+
+
+      <!-- Clientes -->
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Clientes
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          20
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Clientes registrados
+        </p>
+
+      </div>
+
+
+      <!-- Alertas -->
+      <div class="rounded-xl border border-amber-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Alertas
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-amber-600">
+          4
+        </p>
+
+        <p class="mt-2 text-xs text-amber-600">
+          Productos con stock bajo
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ACCIONES -->
+    <section>
+
+      <div class="mb-5">
+        <h2 class="text-xl font-bold text-slate-900">
+          Acciones principales
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Accede rápidamente a las diferentes áreas del sistema.
+        </p>
+      </div>
+
+
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+        <!-- Productos -->
+        <a
+          routerLink="/productos"
+          class="group rounded-xl border border-slate-200
+                 bg-white p-6 shadow-sm transition
+                 hover:-translate-y-1 hover:border-teal-300
+                 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-teal-50 text-2xl">
+            📦
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Productos
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Administrar productos y categorías.
+          </p>
+
+        </a>
+
+
+        <!-- Proveedores -->
+        <a
+          routerLink="/proveedores"
+          class="group rounded-xl border border-slate-200
+                 bg-white p-6 shadow-sm transition
+                 hover:-translate-y-1 hover:border-teal-300
+                 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-blue-50 text-2xl">
+            🚚
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Proveedores
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar y administrar proveedores.
+          </p>
+
+        </a>
+
+
+        <!-- Compras -->
+        <a
+          routerLink="/compras"
+          class="group rounded-xl border border-slate-200
+                 bg-white p-6 shadow-sm transition
+                 hover:-translate-y-1 hover:border-teal-300
+                 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-purple-50 text-2xl">
+            🛒
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Compras
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar las compras realizadas.
+          </p>
+
+        </a>
+
+
+        <!-- Inventario -->
+        <a
+          routerLink="/inventario"
+          class="group rounded-xl border border-slate-200
+                 bg-white p-6 shadow-sm transition
+                 hover:-translate-y-1 hover:border-teal-300
+                 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-amber-50 text-2xl">
+            📊
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Inventario
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar existencias y movimientos.
+          </p>
+
+        </a>
+
+
+        <!-- Ventas -->
+        <a
+          routerLink="/ventas"
+          class="group rounded-xl border border-slate-200
+                 bg-white p-6 shadow-sm transition
+                 hover:-translate-y-1 hover:border-teal-300
+                 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-emerald-50 text-2xl">
+            💰
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Ventas
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar las operaciones de venta.
+          </p>
+
+        </a>
+
+        <a
+          routerLink="/reportes"
+          class="group rounded-xl border border-slate-200
+                 bg-white p-6 shadow-sm transition
+                 hover:-translate-y-1 hover:border-teal-300
+                 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-rose-50 text-2xl">
+            📈
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Reportes
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar reportes generales del sistema.
+          </p>
+
+        </a>
+
+      </div>
 
     </section>
 

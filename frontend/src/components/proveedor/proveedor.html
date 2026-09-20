@@ -1,0 +1,257 @@
+<div class="p-6">
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <!-- Regresar al panel -->
+        <div class="mb-4">
+            <button type="button" (click)="regresarPanel()"
+                class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                Regresar al panel
+            </button>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6">
+            {{ editado ? 'Editar proveedor' : 'Registrar proveedor' }}
+        </h2>
+
+        <form [formGroup]="proveedorForm" (ngSubmit)="editado ? actualizarProveedor() : crearProveedor()">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- Nombre -->
+                <div>
+
+                    <label class="block mb-2 font-medium">
+                        Nombre del proveedor
+                    </label>
+
+                    <input type="text" formControlName="nombreProveedor" class="w-full border rounded-lg px-3 py-2"
+                        placeholder="Ingrese el nombre">
+
+                    <div *ngIf="
+              proveedorForm.get('nombreProveedor')?.touched &&
+              proveedorForm.get('nombreProveedor')?.invalid
+            " class="text-red-500 text-sm mt-1">
+
+                        <span *ngIf="proveedorForm.get('nombreProveedor')?.hasError('required')">
+                            El nombre es obligatorio.
+                        </span>
+
+                        <span *ngIf="proveedorForm.get('nombreProveedor')?.hasError('maxlength')">
+                            El nombre no puede superar los 150 caracteres.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Teléfono -->
+                <div>
+
+                    <label class="block mb-2 font-medium">
+                        Teléfono
+                    </label>
+
+                    <input type="text" formControlName="telefonoProveedor" class="w-full border rounded-lg px-3 py-2"
+                        placeholder="Ingrese el teléfono">
+
+                    <div *ngIf="
+              proveedorForm.get('telefonoProveedor')?.touched &&
+              proveedorForm.get('telefonoProveedor')?.invalid
+            " class="text-red-500 text-sm mt-1">
+
+                        <span *ngIf="proveedorForm.get('telefonoProveedor')?.hasError('required')">
+                            El teléfono es obligatorio.
+                        </span>
+
+                        <span *ngIf="proveedorForm.get('telefonoProveedor')?.hasError('maxlength')">
+                            El teléfono no puede superar los 15 caracteres.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Correo -->
+                <div>
+
+                    <label class="block mb-2 font-medium">
+                        Correo
+                    </label>
+
+                    <input type="email" formControlName="correoProveedor" class="w-full border rounded-lg px-3 py-2"
+                        placeholder="ejemplo@correo.com">
+
+                    <div *ngIf="
+              proveedorForm.get('correoProveedor')?.touched &&
+              proveedorForm.get('correoProveedor')?.invalid
+            " class="text-red-500 text-sm mt-1">
+
+                        <span *ngIf="proveedorForm.get('correoProveedor')?.hasError('required')">
+                            El correo es obligatorio.
+                        </span>
+
+                        <span *ngIf="proveedorForm.get('correoProveedor')?.hasError('email')">
+                            El correo no tiene un formato válido.
+                        </span>
+
+                        <span *ngIf="proveedorForm.get('correoProveedor')?.hasError('maxlength')">
+                            El correo no puede superar los 50 caracteres.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Dirección -->
+                <div>
+
+                    <label class="block mb-2 font-medium">
+                        Dirección
+                    </label>
+
+                    <input type="text" formControlName="direccionProveedor" class="w-full border rounded-lg px-3 py-2"
+                        placeholder="Ingrese la dirección">
+
+                    <div *ngIf="
+              proveedorForm.get('direccionProveedor')?.touched &&
+              proveedorForm.get('direccionProveedor')?.invalid
+            " class="text-red-500 text-sm mt-1">
+
+                        <span *ngIf="proveedorForm.get('direccionProveedor')?.hasError('required')">
+                            La dirección es obligatoria.
+                        </span>
+
+                        <span *ngIf="proveedorForm.get('direccionProveedor')?.hasError('maxlength')">
+                            La dirección no puede superar los 200 caracteres.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Estado -->
+                <div class="flex items-center gap-3">
+
+                    <input type="checkbox" formControlName="estadoProveedor" class="w-5 h-5">
+
+                    <label>
+                        Proveedor activo
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- Botones -->
+            <div class="flex gap-3 mt-6">
+
+                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                    {{ editado ? 'Actualizar' : 'Guardar' }}
+                </button>
+
+                <button *ngIf="editado" type="button" (click)="cancelarEdicion()"
+                    class="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- Tabla -->
+    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+
+        <h2 class="text-xl font-bold mb-4">
+            Lista de proveedores
+        </h2>
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full border-collapse">
+
+                <thead>
+
+                    <tr class="bg-gray-100">
+
+                        <th class="p-3 text-left">Nombre</th>
+                        <th class="p-3 text-left">Teléfono</th>
+                        <th class="p-3 text-left">Correo</th>
+                        <th class="p-3 text-left">Dirección</th>
+                        <th class="p-3 text-left">Estado</th>
+                        <th class="p-3 text-left">Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr *ngFor="let proveedor of proveedores" class="border-b">
+
+                        <td class="p-3">
+                            {{ proveedor.nombreProveedor }}
+                        </td>
+
+                        <td class="p-3">
+                            {{ proveedor.telefonoProveedor }}
+                        </td>
+
+                        <td class="p-3">
+                            {{ proveedor.correoProveedor }}
+                        </td>
+
+                        <td class="p-3">
+                            {{ proveedor.direccionProveedor }}
+                        </td>
+
+                        <td class="p-3">
+
+                            <span [class]="proveedor.estadoProveedor
+                  ? 'text-green-600'
+                  : 'text-red-600'">
+                                {{ proveedor.estadoProveedor ? 'Activo' : 'Inactivo' }}
+                            </span>
+
+                        </td>
+
+                        <td class="p-3 flex gap-2">
+
+                            <button type="button" (click)="editarProveedor(proveedor)"
+                                class="bg-yellow-500 text-white px-3 py-1 rounded">
+                                Editar
+                            </button>
+
+                            <button type="button" (click)="eliminarProveedor(proveedor)"
+                                class="bg-red-600 text-white px-3 py-1 rounded">
+                                Eliminar
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    <tr *ngIf="proveedores.length === 0">
+
+                        <td colspan="6" class="text-center p-6 text-gray-500">
+                            No hay proveedores registrados.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

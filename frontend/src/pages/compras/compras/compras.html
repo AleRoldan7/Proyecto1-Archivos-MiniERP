@@ -1,53 +1,252 @@
-<div class="dashboard">
+<div class="min-h-screen bg-slate-100">
 
-  <header class="topbar">
+  <!-- HEADER -->
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-    <div>
-      <h1>Compras</h1>
-      <span>Módulo de abastecimiento</span>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">
+          MiniERP
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Panel de Compras
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <div class="text-right">
+          <p class="text-sm font-semibold text-slate-800">
+            Usuario de Compras
+          </p>
+
+          <p class="text-xs text-slate-500">
+            Compras
+          </p>
+        </div>
+
+        <div
+          class="flex h-10 w-10 items-center justify-center
+                 rounded-full bg-blue-600 font-bold text-white">
+          C
+        </div>
+
+      </div>
+
     </div>
-
-    <button (click)="cerrarSesion()">
-      Cerrar sesión
-    </button>
-
   </header>
 
-  <main>
 
-    <section class="bienvenida">
+  <main class="mx-auto max-w-7xl px-6 py-8">
 
-      <h2>
-        Bienvenido,
-        {{ usuario?.nombreUsuario }}
+    <!-- BIENVENIDA -->
+    <section class="mb-8">
+
+      <h2 class="text-3xl font-bold text-slate-900">
+        Gestión de Compras
       </h2>
 
-      <p>
-        Gestione las actividades relacionadas
-        con el abastecimiento de productos.
+      <p class="mt-2 text-slate-500">
+        Gestiona proveedores y abastece los productos de la empresa.
       </p>
 
     </section>
 
-    <section class="cards">
 
-      <article class="card">
-        <h3>Proveedores</h3>
-        <p>Gestionar proveedores.</p>
-        <button>Ingresar</button>
-      </article>
+    <!-- RESUMEN -->
+    <section class="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
-      <article class="card">
-        <h3>Compras</h3>
-        <p>Registrar y consultar compras.</p>
-        <button>Ingresar</button>
-      </article>
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
-      <article class="card">
-        <h3>Productos</h3>
-        <p>Consultar productos disponibles.</p>
-        <button>Consultar</button>
-      </article>
+        <p class="text-sm text-slate-500">
+          Compras registradas
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          15
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Operaciones realizadas
+        </p>
+
+      </div>
+
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Proveedores
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          8
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Proveedores activos
+        </p>
+
+      </div>
+
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+        <p class="text-sm text-slate-500">
+          Compras del mes
+        </p>
+
+        <p class="mt-2 text-3xl font-bold text-slate-900">
+          Q 15,420
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Monto acumulado
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ACCIONES -->
+    <section>
+
+      <div class="mb-5">
+
+        <h2 class="text-xl font-bold text-slate-900">
+          Acciones de compras
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Selecciona una operación.
+        </p>
+
+      </div>
+
+
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+
+        <!-- NUEVA COMPRA -->
+        <a
+          routerLink="/compras/nueva"
+          class="rounded-xl border border-blue-200 bg-blue-600
+                 p-6 text-white shadow-sm transition
+                 hover:-translate-y-1 hover:bg-blue-700">
+
+          <div class="mb-4 text-3xl">
+            ➕
+          </div>
+
+          <h3 class="font-semibold">
+            Registrar compra
+          </h3>
+
+          <p class="mt-2 text-sm text-blue-100">
+            Registra una nueva adquisición de productos.
+          </p>
+
+        </a>
+
+
+        <!-- PROVEEDORES -->
+        <a
+          routerLink="/proveedores"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-blue-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-blue-50 text-2xl">
+            🚚
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Proveedores
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar y administrar proveedores.
+          </p>
+
+        </a>
+
+
+        <!-- PRODUCTOS -->
+        <a
+          routerLink="/productos"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-blue-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-teal-50 text-2xl">
+            📦
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Productos
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consultar productos disponibles.
+          </p>
+
+        </a>
+
+
+        <!-- HISTORIAL -->
+        <a
+          routerLink="/compras/historial"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-blue-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-purple-50 text-2xl">
+            📋
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Historial de compras
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consulta las compras realizadas anteriormente.
+          </p>
+
+        </a>
+
+
+        <!-- REPORTES -->
+        <a
+          routerLink="/reportes/compras"
+          class="rounded-xl border border-slate-200 bg-white
+                 p-6 shadow-sm transition hover:-translate-y-1
+                 hover:border-blue-300 hover:shadow-md">
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center
+                   rounded-lg bg-amber-50 text-2xl">
+            📈
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Reportes de compras
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Consulta compras por fechas y proveedores.
+          </p>
+
+        </a>
+
+      </div>
 
     </section>
 
