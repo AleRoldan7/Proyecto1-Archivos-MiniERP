@@ -1,1 +1,113 @@
-<p>categoria works!</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="mx-auto max-w-3xl">
+
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-800">Gestion de Categorias</h1>
+      <button
+        type="button"
+        (click)="regresarPanel()"
+        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+      >
+        Volver al panel
+      </button>
+    </div>
+
+    <form [formGroup]="categoriaForm" class="rounded-xl bg-white p-6 shadow-sm">
+
+      <div class="mb-4">
+        <label class="mb-1 block text-sm font-medium text-gray-700">Nombre</label>
+        <input
+          type="text"
+          formControlName="nombreCategoria"
+          placeholder="Ej. Limpieza"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        />
+        @if (categoriaForm.get('nombreCategoria')?.invalid && categoriaForm.get('nombreCategoria')?.touched) {
+          <p class="mt-1 text-xs text-red-500">El nombre es obligatorio</p>
+        }
+      </div>
+
+      <div class="mb-6">
+        <label class="mb-1 block text-sm font-medium text-gray-700">Descripcion</label>
+        <textarea
+          formControlName="descripcion"
+          rows="3"
+          placeholder="Opcional"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        ></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        @if (editado) {
+          <button
+            type="button"
+            (click)="cancelarEdicion()"
+            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            (click)="actualizarCategoria()"
+            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            Actualizar categoria
+          </button>
+        } @else {
+          <button
+            type="button"
+            (click)="crearCategoria()"
+            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            Crear categoria
+          </button>
+        }
+      </div>
+    </form>
+
+    <div class="mt-8 overflow-x-auto rounded-xl bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">#</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">Nombre</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">Descripcion</th>
+            <th class="px-4 py-3 text-center font-medium text-gray-500">Productos</th>
+            <th class="px-4 py-3 text-right font-medium text-gray-500">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (categoria of categorias; track categoria.idCategoria) {
+            <tr>
+              <td class="px-4 py-3 text-gray-700">{{ categoria.idCategoria }}</td>
+              <td class="px-4 py-3 font-medium text-gray-800">{{ categoria.nombreCategoria }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ categoria.descripcion || '—' }}</td>
+              <td class="px-4 py-3 text-center text-gray-700">{{ categoria.totalProductos }}</td>
+              <td class="px-4 py-3 text-right">
+                <button
+                  type="button"
+                  (click)="editarCategoria(categoria)"
+                  class="mr-2 rounded-lg px-2 py-1 text-indigo-600 hover:bg-indigo-50"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  (click)="eliminarCategoria(categoria)"
+                  class="rounded-lg px-2 py-1 text-red-500 hover:bg-red-50"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="px-4 py-6 text-center text-gray-400">No hay categorias registradas</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

@@ -1,1 +1,162 @@
-<p>producto works!</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="mx-auto max-w-4xl">
+
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-800">Gestion de Productos</h1>
+      <button
+        type="button"
+        (click)="regresarPanel()"
+        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+      >
+        Volver al panel
+      </button>
+    </div>
+
+    <form [formGroup]="productoForm" class="rounded-xl bg-white p-6 shadow-sm">
+
+      <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label class="mb-1 block text-sm font-medium text-gray-700">Nombre</label>
+          <input
+            type="text"
+            formControlName="nombreProducto"
+            placeholder="Ej. Jabon liquido"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+          @if (productoForm.get('nombreProducto')?.invalid && productoForm.get('nombreProducto')?.touched) {
+            <p class="mt-1 text-xs text-red-500">El nombre es obligatorio</p>
+          }
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-gray-700">Categoria</label>
+          <select
+            formControlName="idCategoria"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          >
+            <option value="" disabled>Selecciona una categoria</option>
+            @for (categoria of categorias; track categoria.idCategoria) {
+              <option [value]="categoria.idCategoria">{{ categoria.nombreCategoria }}</option>
+            }
+          </select>
+          @if (productoForm.get('idCategoria')?.invalid && productoForm.get('idCategoria')?.touched) {
+            <p class="mt-1 text-xs text-red-500">Selecciona una categoria</p>
+          }
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="mb-1 block text-sm font-medium text-gray-700">Descripcion</label>
+        <textarea
+          formControlName="descripcionProducto"
+          rows="2"
+          placeholder="Opcional"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        ></textarea>
+      </div>
+
+      <div class="mb-6 sm:w-48">
+        <label class="mb-1 block text-sm font-medium text-gray-700">Stock minimo</label>
+        <input
+          type="number"
+          min="0"
+          formControlName="stockMinimo"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        />
+        @if (editado) {
+          <p class="mt-1 text-xs text-amber-600">
+            El producto no devuelve el stock minimo guardado: verifica este valor antes de actualizar.
+          </p>
+        }
+      </div>
+
+      <div class="flex justify-end gap-3">
+        @if (editado) {
+          <button
+            type="button"
+            (click)="cancelarEdicion()"
+            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            (click)="actualizarProducto()"
+            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            Actualizar producto
+          </button>
+        } @else {
+          <button
+            type="button"
+            (click)="crearProducto()"
+            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            Crear producto
+          </button>
+        }
+      </div>
+    </form>
+
+    <div class="mt-8 overflow-x-auto rounded-xl bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">#</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">Nombre</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">Categoria</th>
+            <th class="px-4 py-3 text-center font-medium text-gray-500">Estado</th>
+            <th class="px-4 py-3 text-right font-medium text-gray-500">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (producto of productos; track producto.idProducto) {
+            <tr>
+              <td class="px-4 py-3 text-gray-700">{{ producto.idProducto }}</td>
+              <td class="px-4 py-3 font-medium text-gray-800">{{ producto.nombreProducto }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ producto.nombreCategoria }}</td>
+              <td class="px-4 py-3 text-center">
+                @if (producto.estadoProducto) {
+                  <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Activo</span>
+                } @else {
+                  <span class="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500">Inactivo</span>
+                }
+              </td>
+              <td class="px-4 py-3 text-right">
+                <button
+                  type="button"
+                  (click)="editarProducto(producto)"
+                  class="mr-2 rounded-lg px-2 py-1 text-indigo-600 hover:bg-indigo-50"
+                >
+                  Editar
+                </button>
+                @if (producto.estadoProducto) {
+                  <button
+                    type="button"
+                    (click)="desactivarProducto(producto)"
+                    class="rounded-lg px-2 py-1 text-red-500 hover:bg-red-50"
+                  >
+                    Desactivar
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    (click)="activarProducto(producto)"
+                    class="rounded-lg px-2 py-1 text-green-600 hover:bg-green-50"
+                  >
+                    Activar
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="px-4 py-6 text-center text-gray-400">No hay productos registrados</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
