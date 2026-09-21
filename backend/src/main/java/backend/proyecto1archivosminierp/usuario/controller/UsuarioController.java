@@ -39,4 +39,24 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioService.listarUsuarios());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> actualizar(
+            @PathVariable Long id,
+            @RequestBody UsuarioRequestDTO dto) {
+        return ResponseEntity.ok(usuarioService.actualizarUsuario(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<UsuarioResponseDTO> cambiarEstado(
+            @PathVariable Long id,
+            @RequestParam boolean estado) {
+        return ResponseEntity.ok(usuarioService.cambiarEstado(id, estado));
+    }
+
 }
