@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static backend.proyecto1archivosminierp.util.RangoFechas.desdeSeguro;
+import static backend.proyecto1archivosminierp.util.RangoFechas.hastaSeguro;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,7 +27,10 @@ public class ReporteInventarioService {
 
     public List<ProductoVendidoDTO> topProductosMasVendidos(LocalDateTime desde, LocalDateTime hasta, Integer limite) {
         validarRango(desde, hasta);
-        return reporteProductoRepository.topProductosMasVendidos(desde, hasta, pagina(limite, 10));
+        return reporteProductoRepository.topProductosMasVendidos(
+                desdeSeguro(desde),
+                hastaSeguro(hasta),
+                pagina(limite, 10));
     }
 
     public List<ProductoStockDTO> productosMenorExistencia(boolean soloBajoMinimo, Integer limite) {
@@ -36,7 +42,10 @@ public class ReporteInventarioService {
 
     public List<ProductoMovimientoDTO> productosConMasMovimientos(LocalDateTime desde, LocalDateTime hasta, Integer limite) {
         validarRango(desde, hasta);
-        return reporteProductoRepository.productosConMasMovimientos(desde, hasta, pagina(limite, 10));
+        return reporteProductoRepository.productosConMasMovimientos(
+                desdeSeguro(desde),
+                hastaSeguro(hasta),
+                pagina(limite, 10));
     }
 
     public List<MovimientoHistorialDTO> historialDeProducto(Long idProducto, LocalDateTime desde, LocalDateTime hasta) {
@@ -44,7 +53,10 @@ public class ReporteInventarioService {
             throw new DatosInvalidos("Debe seleccionar un producto");
         }
         validarRango(desde, hasta);
-        return reporteProductoRepository.historialDeProducto(idProducto, desde, hasta);
+        return reporteProductoRepository.historialDeProducto(
+                idProducto,
+                desdeSeguro(desde),
+                hastaSeguro(hasta));
     }
 
     private Pageable pagina(Integer limite, int porDefecto) {

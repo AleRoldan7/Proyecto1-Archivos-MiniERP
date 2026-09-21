@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static backend.proyecto1archivosminierp.util.RangoFechas.desdeSeguro;
+import static backend.proyecto1archivosminierp.util.RangoFechas.hastaSeguro;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,14 +33,16 @@ public class ReporteVentaService {
 
     public List<ClienteTopDTO> topClientes(LocalDateTime desde, LocalDateTime hasta, Integer limite) {
         validarRangoOpcional(desde, hasta);
-        return reporteVentaRepository.topClientesPorMonto(desde, hasta, pagina(limite, 10));
+        return reporteVentaRepository.topClientesPorMonto(
+                desdeSeguro(desde), hastaSeguro(hasta), pagina(limite, 10));
     }
 
     public List<ProductoIngresadoDTO> topProductosPorIngreso(LocalDateTime desde, LocalDateTime hasta, Integer limite) {
         validarRangoOpcional(desde, hasta);
-        return reporteVentaRepository.topProductosPorIngreso(desde, hasta, pagina(limite, 10));
+        return reporteVentaRepository.topProductosPorIngreso(
+                desdeSeguro(desde), hastaSeguro(hasta), pagina(limite, 10));
     }
-
+    
     public List<ResumenVentaDTO> resumenPorPeriodo(PeriodoReporte periodo,
                                                    LocalDateTime desde, LocalDateTime hasta) {
         validarRangoObligatorio(desde, hasta);

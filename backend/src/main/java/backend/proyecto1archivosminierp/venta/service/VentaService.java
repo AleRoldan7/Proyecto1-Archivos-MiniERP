@@ -45,7 +45,7 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
     private final LoteInventarioRepository loteInventarioRepository;
     private final MovimientoInventarioRepository movimientoInventarioRepository;
     private static final BigDecimal IVA = new BigDecimal("0.12");
-
+    private final FacturaService facturaService;
 
     @Override
     @Transactional
@@ -333,5 +333,10 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
         detalleVentaResponseDTO.setSubtotal(detalleVentaEntity.getPrecioUnitario().multiply(BigDecimal.valueOf(detalleVentaEntity.getCantidad())));
 
         return detalleVentaResponseDTO;
+    }
+
+    public byte[] generarFactura(Integer idVenta) {
+        VentaResponseDTO venta = getById(idVenta);
+        return facturaService.generarFactura(venta);
     }
 }

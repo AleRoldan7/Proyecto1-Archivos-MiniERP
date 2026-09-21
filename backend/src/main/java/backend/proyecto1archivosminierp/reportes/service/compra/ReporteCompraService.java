@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static backend.proyecto1archivosminierp.util.RangoFechas.desdeSeguro;
+import static backend.proyecto1archivosminierp.util.RangoFechas.hastaSeguro;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,12 +31,14 @@ public class ReporteCompraService {
 
     public List<ProveedorTopDTO> topProveedores(LocalDateTime desde, LocalDateTime hasta, Integer limite) {
         validarRangoOpcional(desde, hasta);
-        return reporteCompraRepository.topProveedoresPorMonto(desde, hasta, pagina(limite, 5));
+        return reporteCompraRepository.topProveedoresPorMonto(
+                desdeSeguro(desde), hastaSeguro(hasta), pagina(limite, 5));
     }
 
     public List<ProductoCompradoDTO> productosMasAdquiridos(LocalDateTime desde, LocalDateTime hasta, Integer limite) {
         validarRangoOpcional(desde, hasta);
-        return reporteCompraRepository.productosMasAdquiridos(desde, hasta, pagina(limite, 10));
+        return reporteCompraRepository.productosMasAdquiridos(
+                desdeSeguro(desde), hastaSeguro(hasta), pagina(limite, 10));
     }
 
     private Pageable pagina(Integer limite, int porDefecto) {

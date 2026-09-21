@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface LogRepository extends JpaRepository<LogEntity, Integer> {
-
+ /*
     @Query("""
             SELECT l FROM LogEntity l
             WHERE (:usuario IS NULL OR l.usuario = :usuario)
@@ -25,5 +25,24 @@ public interface LogRepository extends JpaRepository<LogEntity, Integer> {
             """)
     List<LogEntity> buscar(@Param("usuario") String usuario, @Param("modulo") String modulo, @Param("accion") AccionesLog accion,
                            @Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta, Pageable pageable);
+
+  */
+
+    @Query("""
+            SELECT l FROM LogEntity l
+            WHERE (:usuario IS NULL OR l.usuario = :usuario)
+              AND (:modulo  IS NULL OR l.modulo  = :modulo)
+              AND (:accion  IS NULL OR l.accionesLog  = :accion)
+              AND l.fechaLog >= :desde
+              AND l.fechaLog <= :hasta
+            ORDER BY l.fechaLog DESC
+            """)
+    List<LogEntity> buscar(
+            @Param("usuario") String usuario,
+            @Param("modulo") String modulo,
+            @Param("accion") AccionesLog accion,
+            @Param("desde") LocalDateTime desde,
+            @Param("hasta") LocalDateTime hasta,
+            Pageable pageable);
 
 }

@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static backend.proyecto1archivosminierp.util.RangoFechas.desdeSeguro;
+import static backend.proyecto1archivosminierp.util.RangoFechas.hastaSeguro;
+
 @Service
 @RequiredArgsConstructor
 public class LogService {
@@ -39,14 +42,14 @@ public class LogService {
         logRepository.save(log);
     }
 
-    @Transactional(readOnly = true)
     public List<LogResponseDTO> consultar(String usuario, String modulo, AccionesLog accion,
                                           LocalDateTime desde, LocalDateTime hasta, Integer limite) {
-
         int tamanio = (limite == null || limite <= 0) ? 200 : limite;
-
-        return logRepository.buscar(usuario, modulo, accion, desde, hasta, PageRequest.of(0, tamanio))
-                .stream().map(this::convertir).toList();
+        return logRepository.buscar(
+                usuario, modulo, accion,
+                desdeSeguro(desde), hastaSeguro(hasta),
+                PageRequest.of(0, tamanio)
+        ).stream().map(this::convertir).toList();
     }
 
     private String recortar(String texto) {

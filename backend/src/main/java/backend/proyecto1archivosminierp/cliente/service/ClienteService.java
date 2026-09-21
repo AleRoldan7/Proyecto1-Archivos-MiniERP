@@ -20,7 +20,7 @@ public class ClienteService implements Crud<ClienteRequestDTO, ClienteResponseDT
     private final ClienteRepository clienteRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ClienteResponseDTO create(ClienteRequestDTO clienteRequestDTO) {
 
         if (clienteRepository.existsByNit(clienteRequestDTO.getNit())) {
@@ -53,7 +53,7 @@ public class ClienteService implements Crud<ClienteRequestDTO, ClienteResponseDT
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ClienteResponseDTO update(Integer idCliente, ClienteRequestDTO clienteRequestDTO) {
 
         ClienteEntity clienteEntity = clienteRepository.findById(idCliente).orElseThrow(()
