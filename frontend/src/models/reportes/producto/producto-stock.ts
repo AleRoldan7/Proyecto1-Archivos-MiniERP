@@ -1,4 +1,4 @@
-export interface ProdcutoStock {
+export interface ProductoStock {
     idInventario: number;
     idProducto: number;
     nombreProducto: string;

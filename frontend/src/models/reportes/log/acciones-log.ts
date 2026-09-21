@@ -1,0 +1,1 @@
+export type AccionesLog = 'CREAR' | 'ACTUALIZAR' | 'CONSULTAR' | 'ELIMINAR' | 'ERROR';

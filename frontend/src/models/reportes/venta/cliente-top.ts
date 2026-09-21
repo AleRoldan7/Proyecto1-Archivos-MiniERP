@@ -1,6 +1,6 @@
 export interface ClienteTop {
     idCliente: number;
-    nombreCliente: number;
+    nombreCliente: string;
     numeroVentas: number;
     montoAcumulado: number;
 }

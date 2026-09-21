@@ -29,9 +29,9 @@ export class Venta implements OnInit {
   clientes: ClienteResponse[] = [];
   productos: ProductoResponse[] = [];
   inventarios: InventarioResponse[] = [];
- 
+
   ventaExpandidaId: number | null = null;
- 
+
   constructor(
     private formBuilder: FormBuilder,
     private ventaService: VentaService,
@@ -46,7 +46,7 @@ export class Venta implements OnInit {
       detalles: this.formBuilder.array([], [Validators.required, Validators.minLength(1)]),
     });
   }
- 
+
   ngOnInit(): void {
     this.obtenerVentas();
     this.obtenerClientes();
@@ -54,11 +54,11 @@ export class Venta implements OnInit {
     this.obtenerInventarios();
     this.agregarDetalle();
   }
- 
+
   get detalles(): FormArray {
     return this.ventaForm.get('detalles') as FormArray;
   }
- 
+
   nuevoDetalle(): FormGroup {
     return this.formBuilder.group({
       idProducto: ['', [Validators.required]],
@@ -66,11 +66,11 @@ export class Venta implements OnInit {
       precioUnitario: [0, [Validators.required, Validators.min(0.01)]],
     });
   }
- 
+
   agregarDetalle(): void {
     this.detalles.push(this.nuevoDetalle());
   }
- 
+
   eliminarDetalle(index: number): void {
     if (this.detalles.length === 1) {
       Swal.fire({
@@ -82,48 +82,48 @@ export class Venta implements OnInit {
     }
     this.detalles.removeAt(index);
   }
- 
+
   stockDisponible(idProducto: number): number {
     return this.inventarios.find((inv) => inv.idProducto === Number(idProducto))?.stock ?? 0;
   }
- 
+
   subtotal(index: number): number {
     const detalle = this.detalles.at(index);
     const cantidad = Number(detalle.get('cantidad')?.value) || 0;
     const precioUnitario = Number(detalle.get('precioUnitario')?.value) || 0;
     return cantidad * precioUnitario;
   }
- 
+
   subtotalGeneral(): number {
     return this.detalles.controls.reduce((acumulado, _control, index) => {
       return acumulado + this.subtotal(index);
     }, 0);
   }
- 
+
   iva(): number {
     return this.subtotalGeneral() * IVA;
   }
- 
+
   total(): number {
     return this.subtotalGeneral() + this.iva();
   }
- 
+
   nombreCliente(idCliente: number): string {
     return this.clientes.find((c) => c.idCliente === idCliente)?.nombre ?? '—';
   }
- 
+
   nombreProducto(idProducto: number): string {
     return this.productos.find((p) => p.idProducto === idProducto)?.nombreProducto ?? '—';
   }
- 
+
   private detallesConStockInsuficiente(): { producto: string; disponible: number; solicitado: number }[] {
     const problemas: { producto: string; disponible: number; solicitado: number }[] = [];
- 
+
     this.detalles.controls.forEach((detalle) => {
       const idProducto = Number(detalle.get('idProducto')?.value);
       const cantidad = Number(detalle.get('cantidad')?.value) || 0;
       const disponible = this.stockDisponible(idProducto);
- 
+
       if (cantidad > disponible) {
         problemas.push({
           producto: this.nombreProducto(idProducto),
@@ -132,50 +132,57 @@ export class Venta implements OnInit {
         });
       }
     });
- 
+
     return problemas;
   }
- 
+
   registrarVenta(): void {
     if (this.ventaForm.invalid) {
       this.ventaForm.markAllAsTouched();
- 
+
       Swal.fire({
         icon: 'warning',
         title: 'Datos incompletos',
         text: 'Verifica que tengas los campos completos',
       });
- 
+
       return;
     }
- 
+
     const problemas = this.detallesConStockInsuficiente();
- 
+
     if (problemas.length > 0) {
       const detalle = problemas
         .map((p) => `${p.producto}: disponible ${p.disponible}, solicitado ${p.solicitado}`)
         .join('\n');
- 
+
       Swal.fire({
         icon: 'warning',
         title: 'Stock insuficiente',
         text: `No hay existencias suficientes para:\n${detalle}`,
       });
- 
+
       return;
     }
- 
+
     const venta: VentaRequest = this.ventaForm.value;
- 
+
     this.ventaService.registrarVenta(venta).subscribe({
-      next: () => {
+      next: (response) => {                                  
         Swal.fire({
           icon: 'success',
           title: 'Venta Registrada',
-          text: 'Venta registrada correctamente',
-          confirmButtonText: 'Aceptar',
+          html: `Venta <b>#${response.idVenta}</b> registrada correctamente.<br>¿Deseas descargar la factura?`,
+          showCancelButton: true,
+          confirmButtonText: '📄 Descargar factura',
+          cancelButtonText: 'Cerrar',
+          confirmButtonColor: '#4f46e5',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.descargarFactura(response);
+          }
         });
- 
+
         this.limpiarFormulario();
         this.obtenerVentas();
         this.obtenerInventarios();
@@ -189,7 +196,7 @@ export class Venta implements OnInit {
       },
     });
   }
- 
+
   obtenerVentas(): void {
     this.ventaService.obtenerVentas().subscribe({
       next: (response) => {
@@ -204,7 +211,7 @@ export class Venta implements OnInit {
       },
     });
   }
- 
+
   obtenerClientes(): void {
     this.clienteService.obtenerClientes().subscribe({
       next: (response) => {
@@ -212,7 +219,7 @@ export class Venta implements OnInit {
       },
     });
   }
- 
+
   obtenerProductos(): void {
     this.productoService.obtenerProductos().subscribe({
       next: (response) => {
@@ -220,7 +227,7 @@ export class Venta implements OnInit {
       },
     });
   }
- 
+
   obtenerInventarios(): void {
     this.inventarioService.obtenerInventarios().subscribe({
       next: (response) => {
@@ -228,35 +235,55 @@ export class Venta implements OnInit {
       },
     });
   }
- 
+
   alternarDetalleVenta(venta: VentaResponse): void {
     this.ventaExpandidaId = this.ventaExpandidaId === venta.idVenta ? null : venta.idVenta;
   }
- 
+
+  descargarFactura(venta: VentaResponse): void {
+    this.ventaService.descargarFactura(venta.idVenta).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `factura-${venta.idVenta}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo descargar la factura',
+        });
+      },
+    });
+  }
+
   limpiarFormulario(): void {
     this.detalles.clear();
     this.agregarDetalle();
- 
+
     this.ventaForm.reset({
       idCliente: '',
     });
- 
+
     this.ventaForm.markAllAsTouched();
   }
- 
+
   regresarPanel(): void {
     const rol = this.auth.rol();
- 
+
     if (rol === 'ADMIN') {
       this.router.navigate(['/administracion']);
       return;
     }
- 
+
     if (rol === 'VENTAS') {
       this.router.navigate(['/ventas']);
       return;
     }
- 
+
     this.router.navigate(['/']);
   }
 }

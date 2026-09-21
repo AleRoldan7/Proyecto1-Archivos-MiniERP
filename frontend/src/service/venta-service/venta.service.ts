@@ -25,9 +25,11 @@ export class VentaService {
     return this.httpClient.get<VentaResponse>(`${this.urlApi}/${idVenta}`);
   }
 
-  obtenerVentas(): Observable<VentaResponse[]>  {
+  obtenerVentas(): Observable<VentaResponse[]> {
     return this.httpClient.get<VentaResponse[]>(`${this.urlApi}/lista-ventas`);
   }
 
-  
+  descargarFactura(idVenta: number): Observable<Blob> {
+    return this.httpClient.get( `${this.urlApi}/${idVenta}/factura`,{ responseType: 'blob' });
+  }
 }

@@ -1,0 +1,1 @@
+export type PeriodoReporte = 'DIARIO' | 'SEMANAL' | 'MENSUAL' | 'ANUAL';

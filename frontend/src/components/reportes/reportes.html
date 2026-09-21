@@ -1,0 +1,583 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="mx-auto max-w-6xl">
+
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-800">Reportes</h1>
+      <button
+        type="button"
+        (click)="regresarPanel()"
+        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+      >
+        Volver al panel
+      </button>
+    </div>
+
+    <div class="mb-6 flex gap-2 border-b border-gray-200">
+      @for (tab of tabsVisibles; track tab.id) {
+        <button
+          type="button"
+          (click)="cambiarTab(tab.id)"
+          class="border-b-2 px-4 py-2 text-sm font-medium"
+          [class.border-indigo-600]="tabActiva === tab.id"
+          [class.text-indigo-600]="tabActiva === tab.id"
+          [class.border-transparent]="tabActiva !== tab.id"
+          [class.text-gray-500]="tabActiva !== tab.id"
+        >
+          {{ tab.etiqueta }}
+        </button>
+      }
+    </div>
+
+    <!-- ---------- INVENTARIO ---------- -->
+    @if (tabActiva === 'inventario') {
+      <div class="space-y-8">
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Productos mas vendidos</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="masVendidosFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="masVendidosFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="masVendidosFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarMasVendidos()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Producto</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Cantidad vendida</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Monto total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of masVendidosResultado; track fila.idProducto) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProducto }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.cantidadVendida }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.montoTotal.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Productos con menor existencia</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <label class="flex items-center gap-2 text-sm text-gray-600">
+              <input type="checkbox" [(ngModel)]="menorExistenciaFiltro.soloBajoMinimo" />
+              Solo bajo el minimo
+            </label>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="menorExistenciaFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarMenorExistencia()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Producto</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Stock</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Stock minimo</th>
+                <th class="px-3 py-2 text-center font-medium text-gray-500">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of menorExistenciaResultado; track fila.idInventario) {
+                <tr [class.bg-red-50]="fila.bajoMinimo">
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProducto }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.stock }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.stockMinimo }}</td>
+                  <td class="px-3 py-2 text-center">
+                    @if (fila.bajoMinimo) {
+                      <span class="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Bajo</span>
+                    } @else {
+                      <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Normal</span>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Productos con mas movimientos</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="masMovimientosFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="masMovimientosFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="masMovimientosFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarMasMovimientos()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Producto</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Total movimientos</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Unidades movidas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of masMovimientosResultado; track fila.idProducto) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProducto }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.totalMovimientos }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.unidadesMovidas }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Historial de movimientos por producto</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Producto</label>
+              <select [(ngModel)]="historialFiltro.idProducto" class="w-56 rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <option [ngValue]="null" disabled>Selecciona un producto</option>
+                @for (producto of productos; track producto.idProducto) {
+                  <option [ngValue]="producto.idProducto">{{ producto.nombreProducto }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="historialFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="historialFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarHistorial()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Tipo</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Cantidad</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Motivo</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Fecha</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Origen</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of historialResultado; track fila.idMovimiento) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.tipoMovimiento }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.cantidad }}</td>
+                  <td class="px-3 py-2 text-gray-600">{{ fila.motivo }}</td>
+                  <td class="px-3 py-2 text-gray-600">{{ fila.fechaMovimiento | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td class="px-3 py-2 text-gray-600">
+                    @if (fila.idVenta) { Venta #{{ fila.idVenta }} }
+                    @else if (fila.idLote) { Lote #{{ fila.idLote }} }
+                    @else { — }
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+      </div>
+    }
+
+    <!-- ---------- COMPRAS ---------- -->
+    @if (tabActiva === 'compras') {
+      <div class="space-y-8">
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Compras por rango</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde *</label>
+              <input type="datetime-local" [(ngModel)]="comprasRangoFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta *</label>
+              <input type="datetime-local" [(ngModel)]="comprasRangoFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarComprasRango()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">#</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Proveedor</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Fecha</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Unidades</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of comprasRangoResultado; track fila.idCompra) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.idCompra }}</td>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProveedor }}</td>
+                  <td class="px-3 py-2 text-gray-600">{{ fila.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.unidades }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.total.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Proveedores con mas compras</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="topProveedoresFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="topProveedoresFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="topProveedoresFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarTopProveedores()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Proveedor</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">N° compras</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Monto acumulado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of topProveedoresResultado; track fila.idProveedor) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProveedor }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.numeroCompras }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.montoAcumulado.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Productos mas adquiridos</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="masAdquiridosFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="masAdquiridosFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="masAdquiridosFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarMasAdquiridos()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Producto</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Veces comprado</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Unidades</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Monto total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of masAdquiridosResultado; track fila.idProducto) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProducto }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.vecesComprado }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.unidadesCompradas }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.montoTotal.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+      </div>
+    }
+
+    <!-- ---------- VENTAS ---------- -->
+    @if (tabActiva === 'ventas') {
+      <div class="space-y-8">
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Ventas por rango</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde *</label>
+              <input type="datetime-local" [(ngModel)]="ventasRangoFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta *</label>
+              <input type="datetime-local" [(ngModel)]="ventasRangoFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarVentasRango()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">#</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Cliente</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Fecha</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Subtotal</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">IVA</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of ventasRangoResultado; track fila.idVenta) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.idVenta }}</td>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreCliente }}</td>
+                  <td class="px-3 py-2 text-gray-600">{{ fila.fechaVenta | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.subtotal.toFixed(2) }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.ivaVenta.toFixed(2) }}</td>
+                  <td class="px-3 py-2 text-right font-medium text-gray-900">Q {{ fila.total.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Clientes con mas ventas</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="topClientesFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="topClientesFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="topClientesFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarTopClientes()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Cliente</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">N° ventas</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Monto acumulado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of topClientesResultado; track fila.idCliente) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreCliente }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.numeroVentas }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.montoAcumulado.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Productos con mayores ingresos</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde</label>
+              <input type="datetime-local" [(ngModel)]="mayoresIngresosFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+              <input type="datetime-local" [(ngModel)]="mayoresIngresosFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Limite</label>
+              <input type="number" min="1" [(ngModel)]="mayoresIngresosFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarMayoresIngresos()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Producto</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Unidades vendidas</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Ingreso total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of mayoresIngresosResultado; track fila.idProducto) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.nombreProducto }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.unidadesVendidas }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.ingresoTotal.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+        <section class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Resumen de ventas por periodo</h2>
+          <div class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Periodo</label>
+              <select [(ngModel)]="resumenVentasFiltro.periodo" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                @for (periodo of periodos; track periodo) {
+                  <option [value]="periodo">{{ periodo }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Desde *</label>
+              <input type="datetime-local" [(ngModel)]="resumenVentasFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500">Hasta *</label>
+              <input type="datetime-local" [(ngModel)]="resumenVentasFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            </div>
+            <button type="button" (click)="buscarResumenVentas()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+          </div>
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Periodo</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">N° ventas</th>
+                <th class="px-3 py-2 text-right font-medium text-gray-500">Total vendido</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (fila of resumenVentasResultado; track $index) {
+                <tr>
+                  <td class="px-3 py-2 text-gray-700">{{ fila.periodo }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">{{ fila.numeroVentas }}</td>
+                  <td class="px-3 py-2 text-right text-gray-700">Q {{ fila.totalVendido.toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </section>
+
+      </div>
+    }
+
+    <!-- ---------- LOGS ---------- -->
+    @if (tabActiva === 'logs') {
+      <section class="rounded-xl bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-lg font-semibold text-gray-800">Auditoria del sistema</h2>
+        <div class="mb-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Usuario</label>
+            <input type="text" [(ngModel)]="logsFiltro.usuario" class="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Modulo</label>
+            <input type="text" [(ngModel)]="logsFiltro.modulo" class="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm" placeholder="COMPRA, VENTA..." />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Accion</label>
+            <select [(ngModel)]="logsFiltro.accion" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+              <option value="">Todas</option>
+              @for (accion of accionesLog; track accion) {
+                <option [value]="accion">{{ accion }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Desde</label>
+            <input type="datetime-local" [(ngModel)]="logsFiltro.desde" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Hasta</label>
+            <input type="datetime-local" [(ngModel)]="logsFiltro.hasta" class="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-gray-500">Limite</label>
+            <input type="number" min="1" [(ngModel)]="logsFiltro.limite" class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+          </div>
+          <button type="button" (click)="buscarLogs()" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Buscar</button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Fecha</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Usuario</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Modulo</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Accion</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Operacion</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Descripcion</th>
+                <th class="px-3 py-2 text-center font-medium text-gray-500">Exitoso</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (log of logsResultado; track log.idLog) {
+                <tr [class.bg-red-50]="!log.exitoso">
+                  <td class="px-3 py-2 whitespace-nowrap text-gray-600">{{ log.fechaLog | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                  <td class="px-3 py-2 text-gray-700">{{ log.usuario }}</td>
+                  <td class="px-3 py-2 text-gray-700">{{ log.modulo }}</td>
+                  <td class="px-3 py-2 text-gray-700">{{ log.accion }}</td>
+                  <td class="px-3 py-2 text-gray-700">{{ log.operacion }}</td>
+                  <td class="px-3 py-2 text-gray-600">{{ log.descripcion }}</td>
+                  <td class="px-3 py-2 text-center">
+                    @if (log.exitoso) {
+                      <span class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Si</span>
+                    } @else {
+                      <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">No</span>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="7" class="px-3 py-4 text-center text-gray-400">Sin resultados</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+  </div>
+</div>
