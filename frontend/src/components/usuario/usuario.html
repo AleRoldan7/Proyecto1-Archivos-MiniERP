@@ -1,1 +1,161 @@
-<p>usuario works!</p>
+<div class="min-h-screen bg-slate-100 p-6">
+  <div class="mx-auto max-w-6xl">
+
+    <!-- HEADER -->
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Gestión de Usuarios</h1>
+        <p class="mt-1 text-sm text-slate-500">Administra los usuarios del sistema</p>
+      </div>
+
+      <div class="flex gap-2">
+        <button
+          type="button"
+          (click)="abrirFormularioNuevo()"
+          class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+        >
+          + Nuevo usuario
+        </button>
+        <button
+          type="button"
+          (click)="regresarPanel()"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+        >
+          Volver
+        </button>
+      </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    @if (mostrarFormulario) {
+      <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-lg font-semibold text-slate-800">
+          {{ editado ? 'Editar usuario' : 'Nuevo usuario' }}
+        </h2>
+
+        <form [formGroup]="usuarioForm" (ngSubmit)="guardar()"
+              class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+          <div>
+            <label class="mb-1 block text-sm font-medium text-slate-700">Nombre</label>
+            <input type="text" formControlName="nombreUsuario"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm font-medium text-slate-700">Correo</label>
+            <input type="email" formControlName="correoUsuario"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm font-medium text-slate-700">Teléfono</label>
+            <input type="text" formControlName="telefonoUsuario"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm font-medium text-slate-700">Rol</label>
+            <select formControlName="idRol"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              <option [ngValue]="null" disabled>Selecciona un rol</option>
+              @for (rol of roles; track rol.idRol) {
+                <option [ngValue]="rol.idRol">{{ rol.nombreRol }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm font-medium text-slate-700">Username</label>
+            <input type="text" formControlName="userName"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm font-medium text-slate-700">
+              Contraseña
+              @if (editado) {
+                <span class="text-xs text-slate-400">(dejar vacío para no cambiar)</span>
+              }
+            </label>
+            <input type="password" formControlName="password"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+          </div>
+
+          <div class="md:col-span-2 flex justify-end gap-2">
+            <button type="button" (click)="cancelar()"
+              class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-100">
+              Cancelar
+            </button>
+            <button type="submit"
+              class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+              {{ editado ? 'Actualizar' : 'Crear' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- TABLA -->
+    <div class="overflow-x-auto rounded-xl bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-slate-500">#</th>
+            <th class="px-4 py-3 text-left font-medium text-slate-500">Nombre</th>
+            <th class="px-4 py-3 text-left font-medium text-slate-500">Usuario</th>
+            <th class="px-4 py-3 text-left font-medium text-slate-500">Correo</th>
+            <th class="px-4 py-3 text-left font-medium text-slate-500">Teléfono</th>
+            <th class="px-4 py-3 text-left font-medium text-slate-500">Rol</th>
+            <th class="px-4 py-3 text-center font-medium text-slate-500">Estado</th>
+            <th class="px-4 py-3 text-right font-medium text-slate-500">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (u of usuarios; track u.idUsuario) {
+            <tr>
+              <td class="px-4 py-3 text-slate-700">{{ u.idUsuario }}</td>
+              <td class="px-4 py-3 text-slate-700">{{ u.nombreUsuario }}</td>
+              <td class="px-4 py-3 text-slate-700">{{ u.userName }}</td>
+              <td class="px-4 py-3 text-slate-700">{{ u.correoUsuario }}</td>
+              <td class="px-4 py-3 text-slate-700">{{ u.telefonoUsuario }}</td>
+              <td class="px-4 py-3">
+                <span class="rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+                  {{ u.nombreRol }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <button type="button"
+                  (click)="cambiarEstado(u)"
+                  [class]="u.estadoUsuario
+                    ? 'rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700'
+                    : 'rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700'">
+                  {{ u.estadoUsuario ? 'Activo' : 'Inactivo' }}
+                </button>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <button type="button" (click)="abrirFormularioEditar(u)"
+                  class="rounded-lg px-2 py-1 text-amber-600 hover:bg-amber-50"
+                  title="Editar">
+                  ✏️
+                </button>
+                <button type="button" (click)="eliminar(u)"
+                  class="ml-1 rounded-lg px-2 py-1 text-red-600 hover:bg-red-50"
+                  title="Eliminar">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="px-4 py-6 text-center text-slate-400">
+                No hay usuarios registrados
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
