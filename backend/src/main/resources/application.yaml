@@ -5,11 +5,11 @@ spring:
   mvc:
     servlet:
       path: "/api/v1"
-  
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/mini_erp_muebles
-    username: postgres
-    password: 010418
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -27,5 +27,5 @@ spring:
     repair-on-migrate: true
 
 jwt:
-  secret: "MiniERP-JWT-Secret-Key-Proyecto-Archivos-Segundo-Semestre"
-  expiration: 3600000
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
