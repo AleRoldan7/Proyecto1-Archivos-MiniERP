@@ -65,6 +65,6 @@ export class ProductoService {
   }
 
   disponiblesParaVenta(): Observable<ProductoResponse[]> {
-    return this.httpClient.get<ProductoResponse[]>(`${this.urlApi}/productos/disponibles-para-venta`);
+    return this.httpClient.get<ProductoResponse[]>(`${this.urlApi}/disponibles-para-venta`);
   }
 }
