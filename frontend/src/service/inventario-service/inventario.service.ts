@@ -11,7 +11,7 @@ import { LoteInventarioResponse } from '../../models/inventario/lote-inventario-
 })
 export class InventarioService {
 
-   private restConstants = new RestConstants();
+  private restConstants = new RestConstants();
   private readonly urlApi: string;
 
   constructor(private httpClient: HttpClient) {

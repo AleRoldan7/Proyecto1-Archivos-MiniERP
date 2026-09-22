@@ -52,56 +52,25 @@
     <section class="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
       <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Ventas realizadas
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-slate-900">
-          25
-        </p>
-
+        <p class="text-sm text-slate-500">Ventas realizadas</p>
+        <p class="mt-2 text-3xl font-bold text-slate-900">{{ stats.totalVentas }}</p>
       </div>
-
 
       <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Clientes
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-slate-900">
-          20
-        </p>
-
+        <p class="text-sm text-slate-500">Clientes</p>
+        <p class="mt-2 text-3xl font-bold text-slate-900">{{ stats.totalClientes }}</p>
       </div>
-
 
       <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Ventas del mes
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-slate-900">
-          Q 24,850
-        </p>
-
+        <p class="text-sm text-slate-500">Ventas del mes</p>
+        <p class="mt-2 text-3xl font-bold text-slate-900">Q {{ stats.montoMes | number:'1.2-2' }}</p>
       </div>
-
 
       <div class="rounded-xl border border-emerald-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Ventas de hoy
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-emerald-600">
-          Q 2,450
-        </p>
-
+        <p class="text-sm text-slate-500">Ventas de hoy</p>
+        <p class="mt-2 text-3xl font-bold text-emerald-600">Q {{ stats.montoHoy | number:'1.2-2' }}</p>
       </div>
-
+      
     </section>
 
 

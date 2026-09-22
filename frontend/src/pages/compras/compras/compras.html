@@ -54,53 +54,21 @@
     <section class="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
       <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Compras registradas
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-slate-900">
-          15
-        </p>
-
-        <p class="mt-2 text-xs text-slate-500">
-          Operaciones realizadas
-        </p>
-
+        <p class="text-sm text-slate-500">Compras registradas</p>
+        <p class="mt-2 text-3xl font-bold text-slate-900">{{ stats.totalCompras }}</p>
+        <p class="mt-2 text-xs text-slate-500">Operaciones realizadas</p>
       </div>
 
-
       <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Proveedores
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-slate-900">
-          8
-        </p>
-
-        <p class="mt-2 text-xs text-slate-500">
-          Proveedores activos
-        </p>
-
+        <p class="text-sm text-slate-500">Proveedores</p>
+        <p class="mt-2 text-3xl font-bold text-slate-900">{{ stats.totalProveedores }}</p>
+        <p class="mt-2 text-xs text-slate-500">Proveedores activos</p>
       </div>
 
-
       <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p class="text-sm text-slate-500">
-          Compras del mes
-        </p>
-
-        <p class="mt-2 text-3xl font-bold text-slate-900">
-          Q 15,420
-        </p>
-
-        <p class="mt-2 text-xs text-slate-500">
-          Monto acumulado
-        </p>
-
+        <p class="text-sm text-slate-500">Compras del mes</p>
+        <p class="mt-2 text-3xl font-bold text-slate-900">Q {{ stats.montoMes | number:'1.2-2' }}</p>
+        <p class="mt-2 text-xs text-slate-500">Monto acumulado</p>
       </div>
 
     </section>
