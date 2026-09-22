@@ -19,6 +19,14 @@ target/
 *.iml
 *.ipr
 
+### Angular / Node (frontend) ###
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
