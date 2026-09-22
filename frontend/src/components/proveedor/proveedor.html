@@ -1,257 +1,145 @@
-<div class="p-6">
+<div class="min-h-screen bg-gray-50 p-6">
+    <div class="mx-auto max-w-5xl">
 
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <!-- Regresar al panel -->
-        <div class="mb-4">
+        <!-- HEADER -->
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-semibold text-gray-800">Gestión de Proveedores</h1>
             <button type="button" (click)="regresarPanel()"
-                class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
-                Regresar al panel
+                class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
+                Volver al panel
             </button>
         </div>
 
-        <h2 class="text-2xl font-bold mb-6">
-            {{ editado ? 'Editar proveedor' : 'Registrar proveedor' }}
-        </h2>
+        <!-- FORMULARIO -->
+        <form [formGroup]="proveedorForm" (ngSubmit)="editado ? actualizarProveedor() : crearProveedor()"
+            class="rounded-xl bg-white p-6 shadow-sm">
 
-        <form [formGroup]="proveedorForm" (ngSubmit)="editado ? actualizarProveedor() : crearProveedor()">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
 
                 <!-- Nombre -->
                 <div>
-
-                    <label class="block mb-2 font-medium">
-                        Nombre del proveedor
-                    </label>
-
-                    <input type="text" formControlName="nombreProveedor" class="w-full border rounded-lg px-3 py-2"
-                        placeholder="Ingrese el nombre">
-
-                    <div *ngIf="
-              proveedorForm.get('nombreProveedor')?.touched &&
-              proveedorForm.get('nombreProveedor')?.invalid
-            " class="text-red-500 text-sm mt-1">
-
-                        <span *ngIf="proveedorForm.get('nombreProveedor')?.hasError('required')">
-                            El nombre es obligatorio.
-                        </span>
-
-                        <span *ngIf="proveedorForm.get('nombreProveedor')?.hasError('maxlength')">
-                            El nombre no puede superar los 150 caracteres.
-                        </span>
-
-                    </div>
-
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Nombre del proveedor</label>
+                    <input type="text" formControlName="nombreProveedor" placeholder="Ej. Muebles Guatemala"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                    @if (proveedorForm.get('nombreProveedor')?.invalid && proveedorForm.get('nombreProveedor')?.touched)
+                    {
+                    <p class="mt-1 text-xs text-red-500">El nombre es obligatorio</p>
+                    }
                 </div>
-
 
                 <!-- Teléfono -->
                 <div>
-
-                    <label class="block mb-2 font-medium">
-                        Teléfono
-                    </label>
-
-                    <input type="text" formControlName="telefonoProveedor" class="w-full border rounded-lg px-3 py-2"
-                        placeholder="Ingrese el teléfono">
-
-                    <div *ngIf="
-              proveedorForm.get('telefonoProveedor')?.touched &&
-              proveedorForm.get('telefonoProveedor')?.invalid
-            " class="text-red-500 text-sm mt-1">
-
-                        <span *ngIf="proveedorForm.get('telefonoProveedor')?.hasError('required')">
-                            El teléfono es obligatorio.
-                        </span>
-
-                        <span *ngIf="proveedorForm.get('telefonoProveedor')?.hasError('maxlength')">
-                            El teléfono no puede superar los 15 caracteres.
-                        </span>
-
-                    </div>
-
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Teléfono</label>
+                    <input type="text" formControlName="telefonoProveedor" placeholder="5555-0000"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                    @if (proveedorForm.get('telefonoProveedor')?.invalid &&
+                    proveedorForm.get('telefonoProveedor')?.touched) {
+                    <p class="mt-1 text-xs text-red-500">El teléfono es obligatorio</p>
+                    }
                 </div>
-
 
                 <!-- Correo -->
                 <div>
-
-                    <label class="block mb-2 font-medium">
-                        Correo
-                    </label>
-
-                    <input type="email" formControlName="correoProveedor" class="w-full border rounded-lg px-3 py-2"
-                        placeholder="ejemplo@correo.com">
-
-                    <div *ngIf="
-              proveedorForm.get('correoProveedor')?.touched &&
-              proveedorForm.get('correoProveedor')?.invalid
-            " class="text-red-500 text-sm mt-1">
-
-                        <span *ngIf="proveedorForm.get('correoProveedor')?.hasError('required')">
-                            El correo es obligatorio.
-                        </span>
-
-                        <span *ngIf="proveedorForm.get('correoProveedor')?.hasError('email')">
-                            El correo no tiene un formato válido.
-                        </span>
-
-                        <span *ngIf="proveedorForm.get('correoProveedor')?.hasError('maxlength')">
-                            El correo no puede superar los 50 caracteres.
-                        </span>
-
-                    </div>
-
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Correo</label>
+                    <input type="email" formControlName="correoProveedor" placeholder="proveedor@email.com"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                    @if (proveedorForm.get('correoProveedor')?.invalid && proveedorForm.get('correoProveedor')?.touched)
+                    {
+                    <p class="mt-1 text-xs text-red-500">Ingresa un correo válido</p>
+                    }
                 </div>
-
 
                 <!-- Dirección -->
                 <div>
-
-                    <label class="block mb-2 font-medium">
-                        Dirección
-                    </label>
-
-                    <input type="text" formControlName="direccionProveedor" class="w-full border rounded-lg px-3 py-2"
-                        placeholder="Ingrese la dirección">
-
-                    <div *ngIf="
-              proveedorForm.get('direccionProveedor')?.touched &&
-              proveedorForm.get('direccionProveedor')?.invalid
-            " class="text-red-500 text-sm mt-1">
-
-                        <span *ngIf="proveedorForm.get('direccionProveedor')?.hasError('required')">
-                            La dirección es obligatoria.
-                        </span>
-
-                        <span *ngIf="proveedorForm.get('direccionProveedor')?.hasError('maxlength')">
-                            La dirección no puede superar los 200 caracteres.
-                        </span>
-
-                    </div>
-
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Dirección</label>
+                    <input type="text" formControlName="direccionProveedor" placeholder="Zona 1, Guatemala"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                    @if (proveedorForm.get('direccionProveedor')?.invalid &&
+                    proveedorForm.get('direccionProveedor')?.touched) {
+                    <p class="mt-1 text-xs text-red-500">La dirección es obligatoria</p>
+                    }
                 </div>
-
-
-                <!-- Estado -->
-                <div class="flex items-center gap-3">
-
-                    <input type="checkbox" formControlName="estadoProveedor" class="w-5 h-5">
-
-                    <label>
-                        Proveedor activo
-                    </label>
-
-                </div>
-
             </div>
 
+            <!-- Estado -->
+            <div class="mb-6 flex items-center gap-2">
+                <input type="checkbox" formControlName="estadoProveedor" id="estadoProveedor"
+                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                <label for="estadoProveedor" class="text-sm text-gray-700">Proveedor activo</label>
+            </div>
 
             <!-- Botones -->
-            <div class="flex gap-3 mt-6">
-
-                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
-                    {{ editado ? 'Actualizar' : 'Guardar' }}
-                </button>
-
-                <button *ngIf="editado" type="button" (click)="cancelarEdicion()"
-                    class="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600">
+            <div class="flex justify-end gap-3">
+                @if (editado) {
+                <button type="button" (click)="cancelarEdicion()"
+                    class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
                     Cancelar
                 </button>
-
+                <button type="submit"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                    Actualizar proveedor
+                </button>
+                } @else {
+                <button type="submit"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                    Crear proveedor
+                </button>
+                }
             </div>
-
         </form>
 
-    </div>
-
-
-    <!-- Tabla -->
-    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-
-        <h2 class="text-xl font-bold mb-4">
-            Lista de proveedores
-        </h2>
-
-        <div class="overflow-x-auto">
-
-            <table class="w-full border-collapse">
-
-                <thead>
-
-                    <tr class="bg-gray-100">
-
-                        <th class="p-3 text-left">Nombre</th>
-                        <th class="p-3 text-left">Teléfono</th>
-                        <th class="p-3 text-left">Correo</th>
-                        <th class="p-3 text-left">Dirección</th>
-                        <th class="p-3 text-left">Estado</th>
-                        <th class="p-3 text-left">Acciones</th>
-
+        <!-- TABLA -->
+        <div class="mt-8 overflow-x-auto rounded-xl bg-white shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-medium text-gray-500">#</th>
+                        <th class="px-4 py-3 text-left font-medium text-gray-500">Nombre</th>
+                        <th class="px-4 py-3 text-left font-medium text-gray-500">Teléfono</th>
+                        <th class="px-4 py-3 text-left font-medium text-gray-500">Correo</th>
+                        <th class="px-4 py-3 text-left font-medium text-gray-500">Dirección</th>
+                        <th class="px-4 py-3 text-center font-medium text-gray-500">Estado</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-500">Acciones</th>
                     </tr>
-
                 </thead>
-
-                <tbody>
-
-                    <tr *ngFor="let proveedor of proveedores" class="border-b">
-
-                        <td class="p-3">
-                            {{ proveedor.nombreProveedor }}
+                <tbody class="divide-y divide-gray-100">
+                    @for (proveedor of proveedores; track proveedor.idProveedor) {
+                    <tr>
+                        <td class="px-4 py-3 text-gray-700">{{ proveedor.idProveedor }}</td>
+                        <td class="px-4 py-3 font-medium text-gray-800">{{ proveedor.nombreProveedor }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ proveedor.telefonoProveedor }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ proveedor.correoProveedor }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ proveedor.direccionProveedor }}</td>
+                        <td class="px-4 py-3 text-center">
+                            @if (proveedor.estadoProveedor) {
+                            <span
+                                class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Activo</span>
+                            } @else {
+                            <span
+                                class="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500">Inactivo</span>
+                            }
                         </td>
-
-                        <td class="p-3">
-                            {{ proveedor.telefonoProveedor }}
-                        </td>
-
-                        <td class="p-3">
-                            {{ proveedor.correoProveedor }}
-                        </td>
-
-                        <td class="p-3">
-                            {{ proveedor.direccionProveedor }}
-                        </td>
-
-                        <td class="p-3">
-
-                            <span [class]="proveedor.estadoProveedor
-                  ? 'text-green-600'
-                  : 'text-red-600'">
-                                {{ proveedor.estadoProveedor ? 'Activo' : 'Inactivo' }}
-                            </span>
-
-                        </td>
-
-                        <td class="p-3 flex gap-2">
-
+                        <td class="px-4 py-3 text-right">
                             <button type="button" (click)="editarProveedor(proveedor)"
-                                class="bg-yellow-500 text-white px-3 py-1 rounded">
+                                class="mr-2 rounded-lg px-2 py-1 text-indigo-600 hover:bg-indigo-50">
                                 Editar
                             </button>
-
+                            @if (proveedor.estadoProveedor) {
                             <button type="button" (click)="eliminarProveedor(proveedor)"
-                                class="bg-red-600 text-white px-3 py-1 rounded">
-                                Eliminar
+                                class="rounded-lg px-2 py-1 text-red-500 hover:bg-red-50">
+                                Desactivar
                             </button>
-
+                            }
                         </td>
-
                     </tr>
-
-                    <tr *ngIf="proveedores.length === 0">
-
-                        <td colspan="6" class="text-center p-6 text-gray-500">
-                            No hay proveedores registrados.
-                        </td>
-
+                    } @empty {
+                    <tr>
+                        <td colspan="7" class="px-4 py-6 text-center text-gray-400">No hay proveedores registrados</td>
                     </tr>
-
+                    }
                 </tbody>
-
             </table>
-
         </div>
 
     </div>
-
 </div>

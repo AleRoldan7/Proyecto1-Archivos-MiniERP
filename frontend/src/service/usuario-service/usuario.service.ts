@@ -39,8 +39,10 @@ export class UsuarioService {
   }
 
   listarRoles(): Observable<RolResponse[]> {
-    return this.httpClient.get<RolResponse[]>(
-      `${this.restConstants.getApiUrl()}roles/lista`
-    );
+    return this.httpClient.get<RolResponse[]>(`${this.restConstants.getApiUrl()}roles/lista`);
+  }
+
+  obtenerPerfil(): Observable<UsuarioResponse> {
+    return this.httpClient.get<UsuarioResponse>(`${this.urlApi}/perfil`);
   }
 }

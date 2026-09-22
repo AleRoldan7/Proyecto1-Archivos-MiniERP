@@ -32,15 +32,8 @@ export class Venta implements OnInit {
 
   ventaExpandidaId: number | null = null;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private ventaService: VentaService,
-    private clienteService: ClienteService,
-    private productoService: ProductoService,
-    private inventarioService: InventarioService,
-    private router: Router,
-    private auth: AuthService
-  ) {
+  constructor(private formBuilder: FormBuilder, private ventaService: VentaService, private clienteService: ClienteService, private productoService: ProductoService,
+    private inventarioService: InventarioService, private router: Router, private auth: AuthService) {
     this.ventaForm = this.formBuilder.group({
       idCliente: ['', [Validators.required]],
       detalles: this.formBuilder.array([], [Validators.required, Validators.minLength(1)]),
@@ -63,12 +56,22 @@ export class Venta implements OnInit {
     return this.formBuilder.group({
       idProducto: ['', [Validators.required]],
       cantidad: [1, [Validators.required, Validators.min(1)]],
-      precioUnitario: [0, [Validators.required, Validators.min(0.01)]],
+      precioUnitario: [0],
     });
   }
 
   agregarDetalle(): void {
     this.detalles.push(this.nuevoDetalle());
+  }
+
+  onProductoSeleccionado(index: number): void {
+    const detalle = this.detalles.at(index);
+    const idProducto = Number(detalle.get('idProducto')?.value);
+    const producto = this.productos.find(p => p.idProducto === idProducto);
+
+    if (producto) {
+      detalle.patchValue({ precioUnitario: producto.precioVenta ?? 0 });
+    }
   }
 
   eliminarDetalle(index: number): void {
@@ -165,10 +168,16 @@ export class Venta implements OnInit {
       return;
     }
 
-    const venta: VentaRequest = this.ventaForm.value;
+    const venta: VentaRequest = {
+      idCliente: Number(this.ventaForm.value.idCliente),
+      detalles: this.detalles.controls.map(d => ({
+        idProducto: Number(d.get('idProducto')?.value),
+        cantidad: Number(d.get('cantidad')?.value),
+      })),
+    };
 
     this.ventaService.registrarVenta(venta).subscribe({
-      next: (response) => {                                  
+      next: (response) => {
         Swal.fire({
           icon: 'success',
           title: 'Venta Registrada',
@@ -221,7 +230,7 @@ export class Venta implements OnInit {
   }
 
   obtenerProductos(): void {
-    this.productoService.obtenerProductos().subscribe({
+    this.productoService.disponiblesParaVenta().subscribe({
       next: (response) => {
         this.productos = response;
       },
@@ -280,7 +289,7 @@ export class Venta implements OnInit {
     }
 
     if (rol === 'VENTAS') {
-      this.router.navigate(['/ventas']);
+      this.router.navigate(['/vendedor']);
       return;
     }
 

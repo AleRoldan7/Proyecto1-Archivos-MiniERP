@@ -1,3 +1,5 @@
+import { ProductoProveedorResponse } from "./producto-proveedor-response";
+
 export interface ProductoResponse {
     idProducto: number;
     nombreProducto: string;
@@ -5,4 +7,6 @@ export interface ProductoResponse {
     idCategoria: number;
     nombreCategoria: string;
     estadoProducto: boolean;
+    precioVenta: number;
+    proveedores: ProductoProveedorResponse[];
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductoResponse } from '../../models/producto/producto-response';
 import { CategoriaResponse } from '../../models/producto/categoria-response';
 import { ProductoService } from '../../service/producto-service/producto.service';
@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth-service/auth.service';
 import Swal from 'sweetalert2';
 import { ProductoRequest } from '../../models/producto/producto-request';
+import { ProveedorService } from '../../service/proveedor-service/proveedor.service';
+import { ProveedorResponse } from '../../models/proveedor/proveedor-response';
 
 @Component({
   selector: 'app-producto',
@@ -21,23 +23,28 @@ export class Producto implements OnInit {
   productoForm: FormGroup;
   productos: ProductoResponse[] = [];
   categorias: CategoriaResponse[] = [];
+  proveedoresDisponibles: ProveedorResponse[] = [];
 
   editado = false;
   productoId: number | null = null;
 
   constructor(private formBuilder: FormBuilder, private productoService: ProductoService, private categoriaService: CategoriaService,
-    private router: Router, private auth: AuthService) {
+    private proveedorService: ProveedorService, private router: Router, private auth: AuthService) {
     this.productoForm = this.formBuilder.group({
       nombreProducto: ['', [Validators.required, Validators.maxLength(150)]],
       descripcionProducto: ['', [Validators.maxLength(255)]],
       idCategoria: ['', [Validators.required]],
       stockMinimo: [0, [Validators.required, Validators.min(0)]],
+      precioVenta: [0, [Validators.required, Validators.min(1)]],
+      proveedores: this.formBuilder.array([], [Validators.required, Validators.minLength(1)]),
     });
   }
 
   ngOnInit(): void {
     this.obtenerProductos();
     this.obtenerCategorias();
+    this.obtenerProveedores();
+    this.agregarProveedor();
   }
 
   crearProducto(): void {
@@ -100,15 +107,60 @@ export class Producto implements OnInit {
     });
   }
 
+  get proveedores(): FormArray {
+    return this.productoForm.get('proveedores') as FormArray;
+  }
+
+  nuevoProveedor(): FormGroup {
+    return this.formBuilder.group({
+      idProveedor: ['', [Validators.required]],
+      precioCompra: [0, [Validators.required, Validators.min(0.01)]],
+    });
+  }
+
+  agregarProveedor(): void {
+    this.proveedores.push(this.nuevoProveedor());
+  }
+
+  eliminarProveedor(index: number): void {
+    if (this.proveedores.length === 1) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Acción no permitida',
+        text: 'El producto debe tener al menos un proveedor',
+      });
+      return;
+    }
+    this.proveedores.removeAt(index);
+  }
+
+  obtenerProveedores(): void {
+    this.proveedorService.obtenerProveedores().subscribe({
+      next: (response) => {
+        this.proveedoresDisponibles = response.filter(p => p.estadoProveedor);
+      },
+    });
+  }
+
   editarProducto(producto: ProductoResponse): void {
     this.editado = true;
     this.productoId = producto.idProducto;
+
+    this.proveedores.clear();
+
+    producto.proveedores.forEach(pp => {
+      this.proveedores.push(this.formBuilder.group({
+        idProveedor: [pp.idProveedor, [Validators.required]],
+        precioCompra: [pp.precioCompra, [Validators.required, Validators.min(0.01)]],
+      }));
+    });
 
     this.productoForm.patchValue({
       nombreProducto: producto.nombreProducto,
       descripcionProducto: producto.descripcionProducto,
       idCategoria: producto.idCategoria,
       stockMinimo: 0,
+      precioVenta: producto.precioVenta,
     });
   }
 
@@ -211,28 +263,46 @@ export class Producto implements OnInit {
     this.limpiarFormulario();
   }
 
+  get esAdmin(): boolean {
+    return this.auth.rol() === 'ADMIN';
+  }
+  
   limpiarFormulario(): void {
+    this.proveedores.clear();
+    this.agregarProveedor();
+
     this.productoForm.reset({
       nombreProducto: '',
       descripcionProducto: '',
       idCategoria: '',
       stockMinimo: 0,
+      precioVenta: 0,
     });
 
     this.editado = false;
     this.productoId = null;
-
     this.productoForm.markAllAsTouched();
   }
 
   regresarPanel(): void {
     const rol = this.auth.rol();
 
-    if (rol === 'ADMIN') {
-      this.router.navigate(['/administracion']);
-      return;
+    switch (rol) {
+      case 'ADMIN':
+        this.router.navigate(['/administracion']);
+        break;
+      case 'COMPRAS':
+        this.router.navigate(['/comprador']);
+        break;
+      case 'INVENTARIO':
+        this.router.navigate(['/inventarista']);
+        break;
+      case 'VENTAS':
+        this.router.navigate(['/vendedor']);
+        break;
+      default:
+        this.router.navigate(['/login']);
+        break;
     }
-
-    this.router.navigate(['/']);
   }
 }

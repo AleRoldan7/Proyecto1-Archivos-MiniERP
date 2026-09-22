@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import { CompraRequest } from '../../models/compra/compra-request';
 import { CommonModule } from '@angular/common';
 import { ProveedorResponse } from '../../models/proveedor/proveedor-response';
+import { CatalogoProveedor } from '../../models/proveedor/catalogo-proveedor';
 
 @Component({
   selector: 'app-compra',
@@ -25,47 +26,43 @@ export class Compra implements OnInit {
   compras: CompraResponse[] = [];
   proveedores: ProveedorResponse[] = [];
   productos: ProductoResponse[] = [];
- 
+  catalogo: CatalogoProveedor[] = [];
+
   editado = false;
   compraId: number | null = null;
- 
-  constructor(
-    private formBuilder: FormBuilder,
-    private compraService: CompraService,
-    private proveedorService: ProveedorService,
-    private productoService: ProductoService,
-    private router: Router,
-    private auth: AuthService
-  ) {
+
+  constructor(private formBuilder: FormBuilder, private compraService: CompraService, private proveedorService: ProveedorService, private productoService: ProductoService,
+    private router: Router, private auth: AuthService) {
     this.compraForm = this.formBuilder.group({
       idProveedor: ['', [Validators.required]],
       detalles: this.formBuilder.array([], [Validators.required, Validators.minLength(1)]),
     });
   }
- 
+
   ngOnInit(): void {
     this.obtenerCompras();
     this.obtenerProveedores();
     this.obtenerProductos();
     this.agregarDetalle();
   }
- 
+
   get detalles(): FormArray {
     return this.compraForm.get('detalles') as FormArray;
   }
- 
+
   nuevoDetalle(): FormGroup {
     return this.formBuilder.group({
       idProducto: ['', [Validators.required]],
       cantidad: [1, [Validators.required, Validators.min(1)]],
-      precioUnitario: [0, [Validators.required, Validators.min(1)]],
+      precioUnitario: [0],
     });
   }
- 
+
+
   agregarDetalle(): void {
     this.detalles.push(this.nuevoDetalle());
   }
- 
+
   eliminarDetalle(index: number): void {
     if (this.detalles.length === 1) {
       Swal.fire({
@@ -77,49 +74,49 @@ export class Compra implements OnInit {
     }
     this.detalles.removeAt(index);
   }
- 
+
   subtotal(index: number): number {
     const detalle = this.detalles.at(index);
     const cantidad = Number(detalle.get('cantidad')?.value) || 0;
     const precioUnitario = Number(detalle.get('precioUnitario')?.value) || 0;
     return cantidad * precioUnitario;
   }
- 
+
   total(): number {
     return this.detalles.controls.reduce((acumulado, _control, index) => {
       return acumulado + this.subtotal(index);
     }, 0);
   }
- 
+
   nombreProveedor(idProveedor: number): string {
     return this.proveedores.find((p) => p.idProveedor === idProveedor)?.nombreProveedor ?? '—';
   }
- 
+
   nombreProducto(idProducto: number): string {
     return this.productos.find((p) => p.idProducto === idProducto)?.nombreProducto ?? '—';
   }
- 
+
   totalCompra(compra: CompraResponse): number {
     return compra.detalles.reduce((acumulado, detalle) => {
       return acumulado + detalle.cantidad * detalle.precioUnitario;
     }, 0);
   }
- 
+
   crearCompra(): void {
     if (this.compraForm.invalid) {
       this.compraForm.markAllAsTouched();
- 
+
       Swal.fire({
         icon: 'warning',
         title: 'Datos incompletos',
         text: 'Verifica que tengas los campos completos',
       });
- 
+
       return;
     }
- 
+
     const compra: CompraRequest = this.compraForm.value;
- 
+
     this.compraService.crearCompra(compra).subscribe({
       next: () => {
         Swal.fire({
@@ -128,7 +125,7 @@ export class Compra implements OnInit {
           text: 'Compra registrada correctamente',
           confirmButtonText: 'Aceptar',
         });
- 
+
         this.limpiarFormulario();
         this.obtenerCompras();
       },
@@ -141,7 +138,7 @@ export class Compra implements OnInit {
       },
     });
   }
- 
+
   obtenerCompras(): void {
     this.compraService.obtenerCompras().subscribe({
       next: (response) => {
@@ -156,15 +153,38 @@ export class Compra implements OnInit {
       },
     });
   }
- 
+
   obtenerProveedores(): void {
     this.proveedorService.obtenerProveedores().subscribe({
       next: (response) => {
-        this.proveedores = response;
+        this.proveedores = response.filter(p => p.estadoProveedor === true);
       },
     });
   }
- 
+
+  onProveedorSeleccionado(): void {
+    const idProveedor = Number(this.compraForm.get('idProveedor')?.value);
+    if (!idProveedor) return;
+
+    this.productoService.obtenerCatalogoPorProveedor(idProveedor).subscribe({
+      next: (catalogo) => {
+        this.catalogo = catalogo;
+        this.detalles.clear();
+        this.agregarDetalle();
+      },
+    });
+  }
+
+  onProductoSeleccionado(index: number): void {
+    const detalle = this.detalles.at(index);
+    const idProducto = Number(detalle.get('idProducto')?.value);
+    const item = this.catalogo.find(c => c.idProducto === idProducto);
+
+    if (item) {
+      detalle.patchValue({ precioUnitario: item.precioCompra });
+    }
+  }
+
   obtenerProductos(): void {
     this.productoService.obtenerProductos().subscribe({
       next: (response) => {
@@ -172,13 +192,13 @@ export class Compra implements OnInit {
       },
     });
   }
- 
+
   editarCompra(compra: CompraResponse): void {
     this.editado = true;
     this.compraId = compra.idCompra;
- 
+
     this.detalles.clear();
- 
+
     compra.detalles.forEach((detalle) => {
       this.detalles.push(
         this.formBuilder.group({
@@ -188,31 +208,31 @@ export class Compra implements OnInit {
         })
       );
     });
- 
+
     this.compraForm.patchValue({
       idProveedor: compra.idProveedor,
     });
   }
- 
+
   actualizarCompra(): void {
     if (this.compraForm.invalid) {
       this.compraForm.markAllAsTouched();
- 
+
       Swal.fire({
         icon: 'warning',
         title: 'Datos incompletos',
         text: 'Verifica que tengas los campos obligatorios',
       });
- 
+
       return;
     }
- 
+
     if (this.compraId == null) {
       return;
     }
- 
+
     const compra: CompraRequest = this.compraForm.value;
- 
+
     this.compraService.actualizarCompra(this.compraId, compra).subscribe({
       next: () => {
         Swal.fire({
@@ -220,7 +240,7 @@ export class Compra implements OnInit {
           title: 'Compra Actualizada',
           text: 'Compra actualizada correctamente',
         });
- 
+
         this.limpiarFormulario();
         this.obtenerCompras();
       },
@@ -233,7 +253,7 @@ export class Compra implements OnInit {
       },
     });
   }
- 
+
   eliminarCompra(compra: CompraResponse): void {
     Swal.fire({
       title: '¿Eliminar Compra?',
@@ -246,7 +266,7 @@ export class Compra implements OnInit {
       if (!resultado.isConfirmed) {
         return;
       }
- 
+
       this.compraService.eliminarCompra(compra.idCompra).subscribe({
         next: () => {
           Swal.fire({
@@ -254,7 +274,7 @@ export class Compra implements OnInit {
             title: 'Compra Eliminada',
             text: 'Compra se elimino correctamente',
           });
- 
+
           this.obtenerCompras();
         },
         error: (error) => {
@@ -267,38 +287,38 @@ export class Compra implements OnInit {
       });
     });
   }
- 
+
   cancelarEdicion(): void {
     this.limpiarFormulario();
   }
- 
+
   limpiarFormulario(): void {
     this.detalles.clear();
     this.agregarDetalle();
- 
+
     this.compraForm.reset({
       idProveedor: '',
     });
- 
+
     this.editado = false;
     this.compraId = null;
- 
+
     this.compraForm.markAllAsTouched();
   }
- 
+
   regresarPanel(): void {
     const rol = this.auth.rol();
- 
+
     if (rol === 'ADMIN') {
       this.router.navigate(['/administracion']);
       return;
     }
- 
+
     if (rol === 'COMPRAS') {
       this.router.navigate(['/comprador']);
       return;
     }
- 
+
     this.router.navigate(['/']);
   }
 }

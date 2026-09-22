@@ -211,7 +211,7 @@ export class Cliente implements OnInit {
     }
  
     if (rol === 'VENTAS') {
-      this.router.navigate(['/ventas']);
+      this.router.navigate(['/vendedor']);
       return;
     }
  

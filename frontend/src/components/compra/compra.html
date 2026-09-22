@@ -3,11 +3,8 @@
 
     <div class="mb-6 flex items-center justify-between">
       <h1 class="text-2xl font-semibold text-gray-800">Gestion de Compras</h1>
-      <button
-        type="button"
-        (click)="regresarPanel()"
-        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-      >
+      <button type="button" (click)="regresarPanel()"
+        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
         Volver al panel
       </button>
     </div>
@@ -16,89 +13,77 @@
 
       <div class="mb-6">
         <label class="mb-1 block text-sm font-medium text-gray-700">Proveedor</label>
-        <select
-          formControlName="idProveedor"
-          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-        >
+        <select formControlName="idProveedor" (change)="onProveedorSeleccionado()"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
           <option value="" disabled>Selecciona un proveedor</option>
           @for (proveedor of proveedores; track proveedor.idProveedor) {
-            <option [value]="proveedor.idProveedor">{{ proveedor.nombreProveedor }}</option>
+          <option [value]="proveedor.idProveedor">{{ proveedor.nombreProveedor }}</option>
           }
         </select>
         @if (compraForm.get('idProveedor')?.invalid && compraForm.get('idProveedor')?.touched) {
-          <p class="mt-1 text-xs text-red-500">Selecciona un proveedor</p>
+        <p class="mt-1 text-xs text-red-500">Selecciona un proveedor</p>
         }
       </div>
 
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-sm font-medium text-gray-700">Productos</h2>
-        <button
-          type="button"
-          (click)="agregarDetalle()"
-          class="rounded-lg bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-100"
-        >
+        <button type="button" (click)="agregarDetalle()"
+          class="rounded-lg bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-100">
           + Agregar producto
         </button>
       </div>
 
+      @if (!compraForm.get('idProveedor')?.value) {
+      <p class="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-700">
+        Selecciona primero un proveedor para ver los productos disponibles.
+      </p>
+      }
+
       <div formArrayName="detalles" class="space-y-3">
         @for (detalle of detalles.controls; track detalle; let i = $index) {
-          <div [formGroupName]="i" class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-4 sm:grid-cols-12 sm:items-end">
+        <div [formGroupName]="i"
+          class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-4 sm:grid-cols-12 sm:items-end">
 
-            <div class="sm:col-span-5">
-              <label class="mb-1 block text-xs font-medium text-gray-500">Producto</label>
-              <select
-                formControlName="idProducto"
-                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              >
-                <option value="" disabled>Selecciona un producto</option>
-                @for (producto of productos; track producto.idProducto) {
-                  <option [value]="producto.idProducto">
-                    {{ producto.nombreProducto }} ({{ producto.nombreCategoria }})
-                  </option>
-                }
-              </select>
-            </div>
-
-            <div class="sm:col-span-2">
-              <label class="mb-1 block text-xs font-medium text-gray-500">Cantidad</label>
-              <input
-                type="number"
-                min="1"
-                formControlName="cantidad"
-                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
-
-            <div class="sm:col-span-2">
-              <label class="mb-1 block text-xs font-medium text-gray-500">Precio unitario</label>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                formControlName="precioUnitario"
-                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
-
-            <div class="sm:col-span-2">
-              <label class="mb-1 block text-xs font-medium text-gray-500">Subtotal</label>
-              <p class="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                Q {{ subtotal(i).toFixed(2) }}
-              </p>
-            </div>
-
-            <div class="sm:col-span-1 flex justify-end">
-              <button
-                type="button"
-                (click)="eliminarDetalle(i)"
-                class="rounded-lg px-2 py-2 text-sm text-red-500 hover:bg-red-50"
-                title="Eliminar producto"
-              >
-                ✕
-              </button>
-            </div>
+          <div class="sm:col-span-5">
+            <label class="mb-1 block text-xs font-medium text-gray-500">Producto</label>
+            <select formControlName="idProducto" (change)="onProductoSeleccionado(i)"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              <option value="" disabled>Selecciona un producto</option>
+              @for (item of catalogo; track item.idProducto) {
+              <option [value]="item.idProducto">
+                {{ item.nombreProducto }} — Q {{ item.precioCompra | number:'1.2-2' }}
+              </option>
+              }
+            </select>
           </div>
+
+          <div class="sm:col-span-2">
+            <label class="mb-1 block text-xs font-medium text-gray-500">Cantidad</label>
+            <input type="number" min="1" formControlName="cantidad"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="mb-1 block text-xs font-medium text-gray-500">Precio unitario</label>
+            <p class="rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700">
+              Q {{ detalle.get('precioUnitario')?.value | number:'1.2-2' }}
+            </p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="mb-1 block text-xs font-medium text-gray-500">Subtotal</label>
+            <p class="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
+              Q {{ subtotal(i).toFixed(2) }}
+            </p>
+          </div>
+
+          <div class="sm:col-span-1 flex justify-end">
+            <button type="button" (click)="eliminarDetalle(i)"
+              class="rounded-lg px-2 py-2 text-sm text-red-500 hover:bg-red-50" title="Eliminar producto">
+              ✕
+            </button>
+          </div>
+        </div>
         }
       </div>
 
@@ -108,31 +93,11 @@
         </p>
       </div>
 
-      <div class="mt-6 flex justify-end gap-3">
-        @if (editado) {
-          <button
-            type="button"
-            (click)="cancelarEdicion()"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            (click)="actualizarCompra()"
-            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Actualizar compra
-          </button>
-        } @else {
-          <button
-            type="button"
-            (click)="crearCompra()"
-            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Registrar compra
-          </button>
-        }
+      <div class="mt-6 flex justify-end">
+        <button type="button" (click)="crearCompra()"
+          class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+          Registrar compra
+        </button>
       </div>
     </form>
 
@@ -150,41 +115,30 @@
         </thead>
         <tbody class="divide-y divide-gray-100">
           @for (compra of compras; track compra.idCompra) {
-            <tr>
-              <td class="px-4 py-3 text-gray-700">{{ compra.idCompra }}</td>
-              <td class="px-4 py-3 text-gray-700">{{ nombreProveedor(compra.idProveedor) }}</td>
-              <td class="px-4 py-3 text-gray-700">{{ compra.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="space-y-0.5">
-                  @for (detalle of compra.detalles; track detalle.idDetalle) {
-                    <li>{{ detalle.cantidad }} x {{ nombreProducto(detalle.idProducto) }}</li>
-                  }
-                </ul>
-              </td>
-              <td class="px-4 py-3 text-right font-medium text-gray-900">
-                Q {{ totalCompra(compra).toFixed(2) }}
-              </td>
-              <td class="px-4 py-3 text-right">
-                <button
-                  type="button"
-                  (click)="editarCompra(compra)"
-                  class="mr-2 rounded-lg px-2 py-1 text-indigo-600 hover:bg-indigo-50"
-                >
-                  Editar
-                </button>
-                <button
-                  type="button"
-                  (click)="eliminarCompra(compra)"
-                  class="rounded-lg px-2 py-1 text-red-500 hover:bg-red-50"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+          <tr>
+            <td class="px-4 py-3 text-gray-700">{{ compra.idCompra }}</td>
+            <td class="px-4 py-3 text-gray-700">{{ nombreProveedor(compra.idProveedor) }}</td>
+            <td class="px-4 py-3 text-gray-700">{{ compra.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-gray-700">
+              <ul class="space-y-0.5">
+                @for (detalle of compra.detalles; track detalle.idDetalle) {
+                <li>{{ detalle.cantidad }} x {{ nombreProducto(detalle.idProducto) }}</li>
+                }
+              </ul>
+            </td>
+            <td class="px-4 py-3 text-right font-medium text-gray-900">
+              Q {{ totalCompra(compra).toFixed(2) }}
+            </td>
+            <td class="px-4 py-3 text-right">
+              <button type="button" (click)="eliminarCompra(compra)"
+                class="rounded-lg px-2 py-1 text-red-500 hover:bg-red-50">
+                Eliminar
+              </button>
+            </td>
+          </tr>
           } @empty {
-            <tr>
-              <td colspan="6" class="px-4 py-6 text-center text-gray-400">No hay compras registradas</td>
-            </tr>
+          <tr>
+            <td colspan="6" class="px-4 py-6 text-center text-gray-400">No hay compras registradas</td>
           }
         </tbody>
       </table>

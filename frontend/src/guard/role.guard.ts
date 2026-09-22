@@ -11,10 +11,12 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
       router.navigate(['/login']);
       return false;
     }
+
     if (!auth.hasAnyRole(allowedRoles)) {
       router.navigate(['/no-autorizado']);
       return false;
     }
+
     return true;
   };
 };

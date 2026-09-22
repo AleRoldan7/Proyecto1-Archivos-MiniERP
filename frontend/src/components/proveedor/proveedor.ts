@@ -177,12 +177,12 @@ export class Proveedor implements OnInit {
   eliminarProveedor(proveedor: ProveedorResponse): void {
 
     Swal.fire({
-      title: '¿Eliminar Proveedor?',
-      text: `Se eliminara al proveedor ${proveedor.nombreProveedor}`,
+      title: '¿Desactivar Proveedor?',
+      text: `Se desactivará ${proveedor.nombreProveedor}. Las compras asociadas se mantienen.`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonText: 'Desactivar',
+      cancelButtonText: 'Cancelar',
     }).then((resultado) => {
 
       if (!resultado.isConfirmed) {
@@ -194,8 +194,8 @@ export class Proveedor implements OnInit {
 
           Swal.fire({
             icon: 'success',
-            title: 'Proveedor Eliminado',
-            text: 'Proveedor se elimino correctamente',
+            title: 'Proveedor Desactivado',
+            text: 'Se desactivó correctamente',
           });
 
           this.obtenerProveedores();
@@ -209,6 +209,57 @@ export class Proveedor implements OnInit {
           });
         }
       });
+    });
+  }
+
+  desactivarProveedor(proveedor: ProveedorResponse): void {
+    Swal.fire({
+      title: '¿Desactivar Proveedor?',
+      text: `Se desactivará ${proveedor.nombreProveedor}. Las compras asociadas se mantienen.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Desactivar',
+      cancelButtonText: 'Cancelar',
+    }).then((resultado) => {
+      if (!resultado.isConfirmed) return;
+
+      this.proveedorService.eliminarProveedor(proveedor.idProveedor).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Proveedor Desactivado',
+            text: 'Se desactivó correctamente',
+          });
+          this.obtenerProveedores();
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.error?.message || error.error?.mensaje || 'No se pudo desactivar',
+          });
+        },
+      });
+    });
+  }
+
+  activarProveedor(proveedor: ProveedorResponse): void {
+    this.proveedorService.activarProveedor(proveedor.idProveedor).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Proveedor Activado',
+          text: 'Se activó correctamente',
+        });
+        this.obtenerProveedores();
+      },
+      error: (error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.error?.message || error.error?.mensaje || 'No se pudo activar',
+        });
+      },
     });
   }
 
@@ -233,18 +284,18 @@ export class Proveedor implements OnInit {
 
   regresarPanel(): void {
 
-  const rol = this.auth.rol();
+    const rol = this.auth.rol();
 
-  if (rol === 'ADMIN') {
-    this.router.navigate(['/administracion']);
-    return;
+    if (rol === 'ADMIN') {
+      this.router.navigate(['/administracion']);
+      return;
+    }
+
+    if (rol === 'COMPRAS') {
+      this.router.navigate(['/comprador']);
+      return;
+    }
+
+    this.router.navigate(['/']);
   }
-
-  if (rol === 'COMPRAS') {
-    this.router.navigate(['/compras']);
-    return;
-  }
-
-  this.router.navigate(['/']);
-}
 }

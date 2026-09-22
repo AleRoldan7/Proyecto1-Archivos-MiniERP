@@ -47,9 +47,9 @@ export class LoginSistema {
   private redireccionar(rol: string): void {
     switch (rol.toUpperCase()) {
       case 'ADMIN':      this.router.navigate(['/administracion']); break;
-      case 'COMPRAS':    this.router.navigate(['/compras']); break;
-      case 'INVENTARIO': this.router.navigate(['/inventario']); break;
-      case 'VENTAS':     this.router.navigate(['/ventas']); break;
+      case 'COMPRAS':    this.router.navigate(['/comprador']); break;
+      case 'INVENTARIO': this.router.navigate(['/inventarista']); break;
+      case 'VENTAS':     this.router.navigate(['/vendedor']); break;
       default:
         Swal.fire({
           icon: 'error',

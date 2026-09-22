@@ -14,24 +14,21 @@
         </p>
       </div>
 
-      <div class="flex items-center gap-4">
-
+      <a routerLink="/perfil" class="flex items-center gap-4 rounded-lg px-2 py-1 transition hover:bg-slate-100"
+        title="Ver mi perfil">
         <div class="text-right">
           <p class="text-sm font-semibold text-slate-800">
             Administrador
           </p>
-
           <p class="text-xs text-slate-500">
             Administración
           </p>
         </div>
 
-        <div class="flex h-10 w-10 items-center justify-center
-                 rounded-full bg-teal-600 font-bold text-white">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 font-bold text-white">
           A
         </div>
-
-      </div>
+      </a>
 
     </div>
   </header>
@@ -144,14 +141,15 @@
         </p>
       </div>
 
-      <a routerLink="/usuarios"
-        class="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-teal-300 hover:shadow-md">
-        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-pink-50 text-2xl">👤</div>
-        <h3 class="font-semibold text-slate-900">Usuarios</h3>
-        <p class="mt-2 text-sm text-slate-500">Administrar usuarios del sistema.</p>
-      </a>
 
       <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+        <a routerLink="/usuarios"
+          class="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-teal-300 hover:shadow-md">
+          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-pink-50 text-2xl">👤</div>
+          <h3 class="font-semibold text-slate-900">Usuarios</h3>
+          <p class="mt-2 text-sm text-slate-500">Administrar usuarios del sistema.</p>
+        </a>
 
         <!-- Productos -->
         <a routerLink="/productos" class="group rounded-xl border border-slate-200
@@ -196,7 +194,14 @@
 
         </a>
 
-
+        <!-- Clientes -->
+        <a routerLink="/clientes"
+          class="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-teal-300 hover:shadow-md">
+          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-50 text-2xl">👥</div>
+          <h3 class="font-semibold text-slate-900">Clientes</h3>
+          <p class="mt-2 text-sm text-slate-500">Consultar y administrar clientes.</p>
+        </a>
+        
         <!-- Compras -->
         <a routerLink="/compras" class="group rounded-xl border border-slate-200
                  bg-white p-6 shadow-sm transition
@@ -282,6 +287,26 @@
 
         </a>
 
+        <!-- Categorías -->
+        <a routerLink="/categorias" class="group rounded-xl border border-slate-200
+         bg-white p-6 shadow-sm transition
+         hover:-translate-y-1 hover:border-teal-300
+         hover:shadow-md">
+
+          <div class="mb-4 flex h-12 w-12 items-center justify-center
+           rounded-lg bg-indigo-50 text-2xl">
+            🏷️
+          </div>
+
+          <h3 class="font-semibold text-slate-900">
+            Categorías
+          </h3>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Administrar las categorías de productos.
+          </p>
+
+        </a>
       </div>
 
     </section>

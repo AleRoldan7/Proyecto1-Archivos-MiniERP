@@ -26,11 +26,7 @@ export class InventarioComponent implements OnInit {
   lotes: LoteInventarioResponse[] = [];
   cargandoLotes = false;
  
-  constructor(
-    private inventarioService: InventarioService,
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  constructor(private inventarioService: InventarioService, private router: Router, private auth: AuthService) {}
  
   ngOnInit(): void {
     this.obtenerInventarios();
@@ -133,7 +129,7 @@ export class InventarioComponent implements OnInit {
     }
  
     if (rol === 'INVENTARIO') {
-      this.router.navigate(['/inventario']);
+      this.router.navigate(['/inventarista']);
       return;
     }
  

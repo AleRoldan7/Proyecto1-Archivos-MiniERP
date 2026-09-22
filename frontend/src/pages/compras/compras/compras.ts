@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-compras',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './compras.html',
   styleUrl: './compras.css',
 })

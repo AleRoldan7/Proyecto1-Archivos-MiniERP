@@ -29,7 +29,7 @@ export class ProveedorService {
     return this.httpClient.get<ProveedorResponse>(`${this.urlApi}/${idProveedor}`);
   }
 
-   actualizarProveedor(idProveedor: number, proveedorUpdate: ProveedorRequest): Observable<ProveedorResponse> {
+  actualizarProveedor(idProveedor: number, proveedorUpdate: ProveedorRequest): Observable<ProveedorResponse> {
     return this.httpClient.put<ProveedorResponse>(`${this.urlApi}/actualizar-proveedor/${idProveedor}`, proveedorUpdate);
   }
 
@@ -37,4 +37,7 @@ export class ProveedorService {
     return this.httpClient.delete<void>(`${this.urlApi}/eliminar/${idProveedor}`);
   }
 
+  activarProveedor(id: number): Observable<ProveedorResponse> {
+    return this.httpClient.patch<ProveedorResponse>(`${this.urlApi}/proveedores/${id}/activar`, {});
+  }
 }

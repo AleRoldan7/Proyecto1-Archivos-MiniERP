@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="mx-auto max-w-5xl">
+
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-800">Alertas de Inventario</h1>
+      <button type="button" (click)="regresarPanel()"
+        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
+        Volver al panel
+      </button>
+    </div>
+
+    <div class="mb-4 flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm">
+      <label class="flex items-center gap-2 text-sm text-gray-700">
+        <input type="checkbox" [(ngModel)]="soloBajoMinimo" (change)="cargar()" />
+        Solo productos bajo el mínimo
+      </label>
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-500">Límite:</span>
+        <input type="number" [(ngModel)]="limite" (change)="cargar()" min="1"
+          class="w-20 rounded-lg border border-gray-300 px-2 py-1 text-sm" />
+      </div>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-gray-500">Producto</th>
+            <th class="px-4 py-3 text-center font-medium text-gray-500">Stock actual</th>
+            <th class="px-4 py-3 text-center font-medium text-gray-500">Stock mínimo</th>
+            <th class="px-4 py-3 text-center font-medium text-gray-500">Estado</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (p of productos; track p.idProducto) {
+          <tr [class]="p.stock <= p.stockMinimo ? 'bg-amber-50' : ''">
+            <td class="px-4 py-3 font-medium">{{ p.nombreProducto }}</td>
+            <td class="px-4 py-3 text-center">{{ p.stock }}</td>
+            <td class="px-4 py-3 text-center">{{ p.stockMinimo }}</td>
+            <td class="px-4 py-3 text-center">
+              @if (p.stock === 0) {
+              <span class="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Agotado</span>
+              } @else if (p.stock <= p.stockMinimo) {
+              <span class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">Stock bajo</span>
+              } @else {
+              <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">OK</span>
+              }
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="4" class="px-4 py-6 text-center text-gray-400">No hay alertas</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-inventario',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './inventario.html',
   styleUrl: './inventario.css',
 })

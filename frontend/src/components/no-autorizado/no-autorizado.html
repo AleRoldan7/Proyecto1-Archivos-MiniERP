@@ -1,0 +1,25 @@
+<div class="flex min-h-screen items-center justify-center bg-slate-100 p-6">
+  <div class="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-lg">
+
+    <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center
+                rounded-full bg-red-100 text-5xl">
+      🚫
+    </div>
+
+    <h1 class="mb-3 text-2xl font-bold text-slate-900">
+      Acceso denegado
+    </h1>
+
+    <p class="mb-8 text-sm text-slate-500">
+      No tienes permisos para acceder a esta sección.
+      Si crees que es un error, contacta al administrador.
+    </p>
+
+    <button type="button" (click)="irAlPanel()"
+      class="w-full rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white
+             transition hover:bg-indigo-700">
+      Volver a mi panel
+    </button>
+
+  </div>
+</div>

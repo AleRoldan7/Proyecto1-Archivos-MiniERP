@@ -167,10 +167,6 @@ export class Reportes implements OnInit {
     this.tabActiva = tab;
   }
 
-  /**
-   * Los <input type="datetime-local"> devuelven "YYYY-MM-DDTHH:mm" sin segundos.
-   * Se completan con ":00" para que calcen con @DateTimeFormat(iso = ISO.DATE_TIME) del backend.
-   */
   private aIso(fecha: string): string | null {
     if (!fecha) {
       return null;
@@ -367,11 +363,22 @@ export class Reportes implements OnInit {
   regresarPanel(): void {
     const rol = this.auth.rol();
 
-    if (rol === 'ADMIN') {
-      this.router.navigate(['/administracion']);
-      return;
+    switch (rol) {
+      case 'ADMIN':
+        this.router.navigate(['/administracion']);
+        break;
+      case 'COMPRAS':
+        this.router.navigate(['/comprador']);
+        break;
+      case 'INVENTARIO':
+        this.router.navigate(['/inventarista']);
+        break;
+      case 'VENTAS':
+        this.router.navigate(['/vendedor']);
+        break;
+      default:
+        this.router.navigate(['/login']);
+        break;
     }
-
-    this.router.navigate(['/']);
   }
 }
