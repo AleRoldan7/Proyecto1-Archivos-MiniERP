@@ -30,7 +30,7 @@ public class AuditoriaLog {
         AccionesLog accion = clasificar(metodo);
 
         if (accion == AccionesLog.CONSULTAR) {
-            return;   // no auditamos lecturas para no inundar la tabla
+            return;
         }
 
         logService.registrar(usuarioActual(), moduloDe(joinPoint), accion, metodo,
@@ -58,9 +58,6 @@ public class AuditoriaLog {
         return AccionesLog.CONSULTAR;
     }
 
-    /**
-     * Toma el nombre del paquete de negocio: ...minierp.<modulo>.service.XService
-     */
     private String moduloDe(JoinPoint joinPoint) {
         String paquete = joinPoint.getSignature().getDeclaringType().getPackageName();
         String[] partes = paquete.split("\\.");
@@ -68,10 +65,6 @@ public class AuditoriaLog {
     }
 
     private String usuarioActual() {
-        // Cuando integres seguridad:
-        // return SecurityContextHolder.getContext().getAuthentication().getName();
-        //return "SISTEMA";
-
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

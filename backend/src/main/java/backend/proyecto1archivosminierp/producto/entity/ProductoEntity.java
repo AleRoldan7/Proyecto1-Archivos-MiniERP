@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "producto")
 @Getter
@@ -27,4 +29,7 @@ public class ProductoEntity {
 
     @Column(name = "estado_producto", nullable = false)
     private boolean estadoProducto;
+
+    @Column(name = "precio_venta", nullable = false, precision = 12, scale = 2)
+    private BigDecimal precioVenta;
 }

@@ -22,13 +22,11 @@ public class LogService {
 
     private final LogRepository logRepository;
 
-    /**
-     * REQUIRES_NEW para que el log se guarde aunque la transacción de negocio
-     * termine haciendo rollback (es justamente el caso de accion = ERROR).
-     */
+    /*
+     * SE UTILIZA NEW PARA CREAR EL LOG AUNQUE OCURRA UN ERROR
+     * */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void registrar(String usuario, String modulo, AccionesLog accion,
-                          String operacion, String descripcion, boolean exitoso) {
+    public void registrar(String usuario, String modulo, AccionesLog accion, String operacion, String descripcion, boolean exitoso) {
 
         LogEntity log = new LogEntity();
         log.setUsuario(usuario == null ? "SISTEMA" : usuario);
@@ -44,11 +42,11 @@ public class LogService {
 
     public List<LogResponseDTO> consultar(String usuario, String modulo, AccionesLog accion,
                                           LocalDateTime desde, LocalDateTime hasta, Integer limite) {
-        int tamanio = (limite == null || limite <= 0) ? 200 : limite;
+        int size = (limite == null || limite <= 0) ? 200 : limite;
         return logRepository.buscar(
                 usuario, modulo, accion,
                 desdeSeguro(desde), hastaSeguro(hasta),
-                PageRequest.of(0, tamanio)
+                PageRequest.of(0, size)
         ).stream().map(this::convertir).toList();
     }
 

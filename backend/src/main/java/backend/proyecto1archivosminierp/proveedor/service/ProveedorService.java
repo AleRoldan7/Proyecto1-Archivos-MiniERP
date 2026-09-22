@@ -3,12 +3,14 @@ package backend.proyecto1archivosminierp.proveedor.service;
 import backend.proyecto1archivosminierp.crud.Crud;
 import backend.proyecto1archivosminierp.excepciones.DatosInvalidos;
 import backend.proyecto1archivosminierp.excepciones.DatosNoEncontrados;
+import backend.proyecto1archivosminierp.excepciones.OperacionInvalida;
 import backend.proyecto1archivosminierp.proveedor.dto.ProveedorRequestDTO;
 import backend.proyecto1archivosminierp.proveedor.dto.ProveedorResponseDTO;
 import backend.proyecto1archivosminierp.proveedor.entity.ProveedorEntity;
 import backend.proyecto1archivosminierp.proveedor.repository.ProveedorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class ProveedorService implements Crud<ProveedorRequestDTO, ProveedorResp
     }
 
     @Override
+    @Transactional
     public ProveedorResponseDTO update(Integer id, ProveedorRequestDTO proveedorRequestDTO) {
 
         ProveedorEntity proveedorEntity = proveedorRepository.findById(id).orElseThrow(()
@@ -87,12 +90,31 @@ public class ProveedorService implements Crud<ProveedorRequestDTO, ProveedorResp
     }
 
     @Override
-    public void delete(Integer integer) {
+    public void delete(Integer idProveedor) {
 
-        ProveedorEntity proveedorEntity = proveedorRepository.findById(integer).orElseThrow(()
-                -> new DatosNoEncontrados("No existe el proveedor con el id: " + integer));
+        ProveedorEntity proveedorEntity = proveedorRepository.findById(idProveedor)
+                .orElseThrow(() -> new DatosNoEncontrados("No existe el proveedor con el id: " + idProveedor));
 
-        proveedorRepository.delete(proveedorEntity);
+        if (Boolean.FALSE.equals(proveedorEntity.getEstadoProveedor())) {
+            throw new OperacionInvalida("El proveedor ya se encuentra inactivo");
+        }
+
+        proveedorEntity.setEstadoProveedor(false);
+        proveedorRepository.save(proveedorEntity);
+    }
+
+    @Transactional
+    public ProveedorResponseDTO activar(Integer idProveedor) {
+
+        ProveedorEntity proveedorEntity = proveedorRepository.findById(idProveedor)
+                .orElseThrow(() -> new DatosNoEncontrados("No existe el proveedor con el id: " + idProveedor));
+
+        if (Boolean.TRUE.equals(proveedorEntity.getEstadoProveedor())) {
+            throw new OperacionInvalida("El proveedor ya se encuentra activo");
+        }
+
+        proveedorEntity.setEstadoProveedor(true);
+        return devuelveProveedor(proveedorRepository.save(proveedorEntity));
     }
 
     private ProveedorResponseDTO devuelveProveedor(ProveedorEntity proveedorEntity) {

@@ -11,10 +11,19 @@ import backend.proyecto1archivosminierp.producto.dto.ProductoResponseDTO;
 import backend.proyecto1archivosminierp.producto.entity.CategoriaEntity;
 import backend.proyecto1archivosminierp.producto.entity.ProductoEntity;
 import backend.proyecto1archivosminierp.producto.repository.ProductoRepository;
+import backend.proyecto1archivosminierp.productoproveedor.dto.ProductoProveedorCatalogoDTO;
+import backend.proyecto1archivosminierp.productoproveedor.dto.ProductoProveedorRequestDTO;
+import backend.proyecto1archivosminierp.productoproveedor.dto.ProductoProveedorResponseDTO;
+import backend.proyecto1archivosminierp.productoproveedor.entity.ProductoProveedorEntity;
+import backend.proyecto1archivosminierp.productoproveedor.repository.ProductoProveedoRepository;
+import backend.proyecto1archivosminierp.proveedor.entity.ProveedorEntity;
+import backend.proyecto1archivosminierp.proveedor.repository.ProveedorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +33,8 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
     private final ProductoRepository productoRepository;
     private final CategoriaService categoriaService;
     private final InventarioRepository inventarioRepository;
+    private final ProveedorRepository proveedorRepository;
+    private final ProductoProveedoRepository productoProveedorRepository;
 
     @Override
     @Transactional
@@ -42,11 +53,12 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
         productoEntity.setDescripcionProducto(productoRequestDTO.getDescripcionProducto());
         productoEntity.setCategoria(categoriaEntity);
         productoEntity.setEstadoProducto(true);
+        productoEntity.setPrecioVenta(productoRequestDTO.getPrecioVenta());
 
         ProductoEntity savedProducto = productoRepository.save(productoEntity);
 
         crearInventarioInicial(savedProducto, productoRequestDTO.getStockMinimo());
-
+        guardarProveedores(savedProducto, productoRequestDTO.getProveedores());
         return devuelveProducto(savedProducto);
     }
 
@@ -68,7 +80,21 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
         productoEntity.setNombreProducto(productoRequestDTO.getNombreProducto().trim());
         productoEntity.setDescripcionProducto(productoRequestDTO.getDescripcionProducto());
         productoEntity.setCategoria(categoriaEntity);
+        productoEntity.setPrecioVenta(productoRequestDTO.getPrecioVenta());
 
+        ProductoEntity updateProducto = productoRepository.save(productoEntity);
+
+        if (productoRequestDTO.getStockMinimo() != null) {
+            inventarioRepository.findByProductoIdProducto(idProducto).ifPresent(inv -> {
+                inv.setStockMinimo(productoRequestDTO.getStockMinimo());
+                inventarioRepository.save(inv);
+            });
+        }
+
+        if (productoRequestDTO.getProveedores() != null) {
+            productoProveedorRepository.deleteByProductoIdProducto(idProducto);
+            guardarProveedores(updateProducto, productoRequestDTO.getProveedores());
+        }
         return devuelveProducto(productoRepository.save(productoEntity));
     }
 
@@ -92,11 +118,7 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
                 .stream().map(this::devuelveProducto).toList();
     }
 
-    /**
-     * Baja lógica. No se borra físicamente porque el producto está referenciado por
-     * detalle_compra, detalle_venta, lote_inventario y movimiento_inventario, y eso
-     * destruiría el historial de los reportes.
-     */
+
     @Override
     @Transactional
     public void delete(Integer idProducto) {
@@ -132,6 +154,52 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
         productoEntity.setEstadoProducto(true);
 
         return devuelveProducto(productoRepository.save(productoEntity));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductoProveedorCatalogoDTO> catalogoPorProveedor(Integer idProveedor) {
+
+        return productoProveedorRepository.buscarCatalogoPorProveedor(idProveedor)
+                .stream()
+                .map(pp -> {
+                    ProductoProveedorCatalogoDTO dto = new ProductoProveedorCatalogoDTO();
+                    dto.setIdProducto(pp.getProducto().getIdProducto());
+                    dto.setNombreProducto(pp.getProducto().getNombreProducto());
+                    dto.setPrecioCompra(pp.getPrecioCompra());
+                    return dto;
+                })
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> disponiblesParaVenta() {
+        return productoRepository.findDisponiblesParaVenta()
+                .stream()
+                .map(this::devuelveProducto)
+                .toList();
+    }
+    
+    private void guardarProveedores(ProductoEntity producto, List<ProductoProveedorRequestDTO> proveedores) {
+
+        for (ProductoProveedorRequestDTO ppDTO : proveedores) {
+
+            ProveedorEntity proveedor = proveedorRepository.findById(ppDTO.getIdProveedor())
+                    .orElseThrow(() -> new DatosNoEncontrados(
+                            "No existe el proveedor con id " + ppDTO.getIdProveedor()));
+
+            if (Boolean.FALSE.equals(proveedor.getEstadoProveedor())) {
+                throw new DatosInvalidos("El proveedor '" + proveedor.getNombreProveedor() + "' está inactivo");
+            }
+
+            ProductoProveedorEntity productoProveedorEntity = new ProductoProveedorEntity();
+            productoProveedorEntity.setProducto(producto);
+            productoProveedorEntity.setProveedor(proveedor);
+            productoProveedorEntity.setPrecioCompra(ppDTO.getPrecioCompra());
+            productoProveedorEntity.setEstado(true);
+            productoProveedorEntity.setFechaCreacion(LocalDateTime.now());
+
+            productoProveedorRepository.save(productoProveedorEntity);
+        }
     }
 
     private void crearInventarioInicial(ProductoEntity productoEntity, Integer stockMinimo) {
@@ -170,6 +238,15 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
         if (productoRequestDTO.getStockMinimo() != null && productoRequestDTO.getStockMinimo() < 0) {
             throw new DatosInvalidos("El stock mínimo no puede ser negativo");
         }
+
+        BigDecimal precio = productoRequestDTO.getPrecioVenta();
+        if (precio == null || precio.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new DatosInvalidos("El precio de venta debe ser mayor a 0");
+        }
+
+        if (productoRequestDTO.getProveedores() == null || productoRequestDTO.getProveedores().isEmpty()) {
+            throw new DatosInvalidos("Debe de tener algún proveedor el producto");
+        }
     }
 
     private ProductoResponseDTO devuelveProducto(ProductoEntity productoEntity) {
@@ -180,6 +257,19 @@ public class ProductoService implements Crud<ProductoRequestDTO, ProductoRespons
         productoResponseDTO.setIdCategoria(productoEntity.getCategoria().getIdCategoria());
         productoResponseDTO.setNombreCategoria(productoEntity.getCategoria().getNombreCategoria());
         productoResponseDTO.setEstadoProducto(productoEntity.isEstadoProducto());
+        productoResponseDTO.setPrecioVenta(productoEntity.getPrecioVenta());
+
+        List<ProductoProveedorEntity> proveedores = productoProveedorRepository.findByProductoIdProductoAndEstadoTrue(productoEntity.getIdProducto());
+        productoResponseDTO.setProveedores(proveedores.stream().map(this::devuelveProductoProveedor).toList());
         return productoResponseDTO;
+    }
+
+    private ProductoProveedorResponseDTO devuelveProductoProveedor(ProductoProveedorEntity productoProveedorEntity) {
+        ProductoProveedorResponseDTO productoProveedorResponseDTO = new ProductoProveedorResponseDTO();
+        productoProveedorResponseDTO.setIdProductoProveedor(productoProveedorEntity.getIdProductoProveedor());
+        productoProveedorResponseDTO.setIdProveedor(productoProveedorEntity.getProveedor().getIdProveedor());
+        productoProveedorResponseDTO.setNombreProveedor(productoProveedorEntity.getProveedor().getNombreProveedor());
+        productoProveedorResponseDTO.setPrecioCompra(productoProveedorEntity.getPrecioCompra());
+        return productoProveedorResponseDTO;
     }
 }

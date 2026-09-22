@@ -50,9 +50,7 @@ public class UsuarioService {
                 .disabled(!usuarioEntity.isEstadoUsuario())
                 .build();
 
-        /*
-         * Generamos JWT
-         */
+
         String token = jwtService.generateToken(userDetails);
 
         return new LoginResponseDTO(usuarioEntity.getIdUsuario(), usuarioEntity.getUserName(), usuarioEntity.getRolEntity().getNombreRol(),
@@ -133,13 +131,11 @@ public class UsuarioService {
         UsuarioEntity usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new DatosNoEncontrados("Usuario no encontrado con id " + id));
 
-        // Validar username único (si cambia)
         if (!usuario.getUserName().equals(dto.getUserName())
                 && usuarioRepository.existsByUserName(dto.getUserName())) {
             throw new OperacionInvalida("El username ya existe");
         }
 
-        // Validar correo único (si cambia)
         if (!usuario.getCorreoUsuario().equals(dto.getCorreoUsuario())
                 && usuarioRepository.existsByCorreoUsuario(dto.getCorreoUsuario())) {
             throw new OperacionInvalida("El correo ya existe");
@@ -154,13 +150,12 @@ public class UsuarioService {
         usuario.setUserName(dto.getUserName());
         usuario.setRolEntity(rol);
 
-        // Solo cambia la contraseña si viene con valor
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
         UsuarioEntity guardado = usuarioRepository.save(usuario);
-        return convertirAResponse(guardado);
+        return devolverUsuario(guardado);
     }
 
     @Transactional
@@ -175,22 +170,27 @@ public class UsuarioService {
         UsuarioEntity usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new DatosNoEncontrados("Usuario no encontrado con id " + id));
         usuario.setEstadoUsuario(estado);
-        return convertirAResponse(usuarioRepository.save(usuario));
+        return devolverUsuario(usuarioRepository.save(usuario));
     }
 
-    // Método auxiliar para no repetir código
-    private UsuarioResponseDTO convertirAResponse(UsuarioEntity usuario) {
-        UsuarioResponseDTO dto = new UsuarioResponseDTO();
-        dto.setIdUsuario(usuario.getIdUsuario());
-        dto.setNombreUsuario(usuario.getNombreUsuario());
-        dto.setCorreoUsuario(usuario.getCorreoUsuario());
-        dto.setTelefonoUsuario(usuario.getTelefonoUsuario());
-        dto.setEstadoUsuario(usuario.isEstadoUsuario());
-        dto.setUserName(usuario.getUserName());
-        if (usuario.getRolEntity() != null) {
-            dto.setIdRol(usuario.getRolEntity().getIdRol());
-            dto.setNombreRol(usuario.getRolEntity().getNombreRol());
+    public UsuarioResponseDTO obtenerPorUsername(String username) {
+        UsuarioEntity usuario = usuarioRepository.findByUserName(username)
+                .orElseThrow(() -> new DatosNoEncontrados("Usuario no encontrado"));
+        return devolverUsuario(usuario);
+    }
+
+    private UsuarioResponseDTO devolverUsuario(UsuarioEntity usuarioEntity) {
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+        usuarioResponseDTO.setIdUsuario(usuarioEntity.getIdUsuario());
+        usuarioResponseDTO.setNombreUsuario(usuarioEntity.getNombreUsuario());
+        usuarioResponseDTO.setCorreoUsuario(usuarioEntity.getCorreoUsuario());
+        usuarioResponseDTO.setTelefonoUsuario(usuarioEntity.getTelefonoUsuario());
+        usuarioResponseDTO.setEstadoUsuario(usuarioEntity.isEstadoUsuario());
+        usuarioResponseDTO.setUserName(usuarioEntity.getUserName());
+        if (usuarioEntity.getRolEntity() != null) {
+            usuarioResponseDTO.setIdRol(usuarioEntity.getRolEntity().getIdRol());
+            usuarioResponseDTO.setNombreRol(usuarioEntity.getRolEntity().getNombreRol());
         }
-        return dto;
+        return usuarioResponseDTO;
     }
 }

@@ -1,11 +1,13 @@
 package backend.proyecto1archivosminierp.producto.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import backend.proyecto1archivosminierp.productoproveedor.dto.ProductoProveedorRequestDTO;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +22,15 @@ public class ProductoRequestDTO {
 
     @NotNull(message = "Debe seleccionar una categoría")
     private Integer idCategoria;
-    
+
     @Min(value = 0, message = "El stock mínimo no puede ser negativo")
     private Integer stockMinimo;
+
+    @NotNull(message = "El precio de venta es obligatorio")
+    @DecimalMin(value = "1.00", message = "El precio de venta debe ser mayor a 0")
+    private BigDecimal precioVenta;
+
+    @NotEmpty(message = "Debe asociar al menos un proveedor")
+    @Valid
+    private List<ProductoProveedorRequestDTO> proveedores;
 }

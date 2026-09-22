@@ -59,4 +59,10 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.cambiarEstado(id, estado));
     }
 
+    @GetMapping("/perfil")
+    public ResponseEntity<UsuarioResponseDTO> obtenerPerfil(
+            java.security.Principal principal) {
+        return ResponseEntity.ok(usuarioService.obtenerPorUsername(principal.getName()));
+    }
+
 }

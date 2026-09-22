@@ -30,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +54,8 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
     public VentaResponseDTO create(VentaRequestDTO ventaRequestDTO) {
         validarVenta(ventaRequestDTO);
         ClienteEntity clienteEntity = buscarCliente(ventaRequestDTO.getIdCliente());
-        BigDecimal subTotal = calcularSubtotal(ventaRequestDTO.getDetalles());
+        Map<Integer, ProductoEntity> productosId = cargarProductos(ventaRequestDTO.getDetalles());
+        BigDecimal subTotal = calcularSubtotal(ventaRequestDTO.getDetalles(), productosId);
         VentaEntity ventaEntity = crearVentaEntity(clienteEntity, subTotal);
         VentaEntity savedVenta = ventaRepository.save(ventaEntity);
         List<DetalleVentaEntity> detalles = procesarDetalles(ventaRequestDTO.getDetalles(), savedVenta);
@@ -118,10 +121,6 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
             throw new DatosInvalidos("La cantidad debe ser mayor que cero");
         }
 
-        if (detalleVentaRequestDTO.getPrecioUnitario() == null || detalleVentaRequestDTO.getPrecioUnitario().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new DatosInvalidos("El precio unitario debe ser mayor que cero");
-        }
-
     }
 
     private ClienteEntity buscarCliente(Integer idCliente) {
@@ -129,19 +128,41 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
     }
 
     private ProductoEntity buscarProducto(Integer idProducto) {
-        return productoRepository.findById(idProducto).orElseThrow(()
-                -> new DatosNoEncontrados("No existe el producto con el id " + idProducto));
+        ProductoEntity producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new DatosNoEncontrados("No existe el producto con el id " + idProducto));
+
+        if (!producto.isEstadoProducto()) {
+            throw new DatosInvalidos(
+                    "El producto '" + producto.getNombreProducto() + "' está inactivo");
+        }
+        return producto;
+
     }
 
-    private BigDecimal calcularSubtotal(List<DetalleVentaRequestDTO> detalles) {
+    private Map<Integer, ProductoEntity> cargarProductos(List<DetalleVentaRequestDTO> detalles) {
+
+        Map<Integer, ProductoEntity> productosPorId = new HashMap<>();
+
+        for (DetalleVentaRequestDTO detalle : detalles) {
+            if (!productosPorId.containsKey(detalle.getIdProducto())) {
+                ProductoEntity producto = buscarProducto(detalle.getIdProducto());
+                productosPorId.put(producto.getIdProducto(), producto);
+            }
+        }
+        return productosPorId;
+    }
+
+    private BigDecimal calcularSubtotal(List<DetalleVentaRequestDTO> detalles,
+                                        Map<Integer, ProductoEntity> productosPorId) {
 
         BigDecimal subtotal = BigDecimal.ZERO;
 
         for (DetalleVentaRequestDTO detalle : detalles) {
-            BigDecimal subtotalDetalle = detalle.getPrecioUnitario().multiply(BigDecimal.valueOf(detalle.getCantidad()));
+            ProductoEntity producto = productosPorId.get(detalle.getIdProducto());
+            BigDecimal precio = producto.getPrecioVenta();
+            BigDecimal subtotalDetalle = precio.multiply(BigDecimal.valueOf(detalle.getCantidad()));
             subtotal = subtotal.add(subtotalDetalle);
         }
-
         return subtotal;
     }
 
@@ -188,7 +209,7 @@ public class VentaService implements Crud<VentaRequestDTO, VentaResponseDTO, Int
         detalle.setVenta(ventaEntity);
         detalle.setProducto(productoEntity);
         detalle.setCantidad(detalleVentaRequestDTO.getCantidad());
-        detalle.setPrecioUnitario(detalleVentaRequestDTO.getPrecioUnitario());
+        detalle.setPrecioUnitario(productoEntity.getPrecioVenta());
         return detalle;
     }
 

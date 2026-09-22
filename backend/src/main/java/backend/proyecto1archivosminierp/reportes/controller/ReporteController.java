@@ -30,7 +30,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/reportes")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class ReporteController {
 
     private final ReporteInventarioService reporteInventarioService;
@@ -44,7 +43,9 @@ public class ReporteController {
     }
     // ---------- Productos e inventario ----------
 
+
     @GetMapping("/mas-vendidos")
+    @PreAuthorize("hasAnyRole('INVENTARIO','ADMIN')")
     public ResponseEntity<List<ProductoVendidoDTO>> topProductosMasVendidos(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
@@ -53,6 +54,7 @@ public class ReporteController {
     }
 
     @GetMapping("/productos/menor-existencia")
+    @PreAuthorize("hasAnyRole('INVENTARIO','ADMIN')")
     public ResponseEntity<List<ProductoStockDTO>> productosMenorExistencia(
             @RequestParam(defaultValue = "false") boolean soloBajoMinimo,
             @RequestParam(defaultValue = "20") Integer limite) {
@@ -60,6 +62,7 @@ public class ReporteController {
     }
 
     @GetMapping("/productos/mas-movimientos")
+    @PreAuthorize("hasAnyRole('INVENTARIO','ADMIN')")
     public ResponseEntity<List<ProductoMovimientoDTO>> productosConMasMovimientos(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
@@ -68,6 +71,7 @@ public class ReporteController {
     }
 
     @GetMapping("/productos/{idProducto}/movimientos")
+    @PreAuthorize("hasAnyRole('INVENTARIO','ADMIN')")
     public ResponseEntity<List<MovimientoHistorialDTO>> historialDeProducto(
             @PathVariable Long idProducto,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
@@ -78,6 +82,7 @@ public class ReporteController {
     // ---------- Compras y proveedores ----------
 
     @GetMapping("/compras")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<List<CompraReporteDTO>> comprasPorRango(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta) {
@@ -85,6 +90,7 @@ public class ReporteController {
     }
 
     @GetMapping("/proveedores/top")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<List<ProveedorTopDTO>> topProveedores(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
@@ -93,6 +99,7 @@ public class ReporteController {
     }
 
     @GetMapping("/productos/mas-adquiridos")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
     public ResponseEntity<List<ProductoCompradoDTO>> productosMasAdquiridos(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
@@ -103,6 +110,7 @@ public class ReporteController {
     // ---------- Ventas y clientes ----------
 
     @GetMapping("/ventas")
+    @PreAuthorize("hasAnyRole('VENTAS','ADMIN')")
     public ResponseEntity<List<VentaReporteDTO>> ventasPorRango(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta) {
@@ -110,6 +118,7 @@ public class ReporteController {
     }
 
     @GetMapping("/clientes/top")
+    @PreAuthorize("hasAnyRole('VENTAS','ADMIN')")
     public ResponseEntity<List<ClienteTopDTO>> topClientes(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
@@ -118,6 +127,7 @@ public class ReporteController {
     }
 
     @GetMapping("/productos/mayores-ingresos")
+    @PreAuthorize("hasAnyRole('VENTAS','ADMIN')")
     public ResponseEntity<List<ProductoIngresadoDTO>> topProductosPorIngreso(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
@@ -126,6 +136,7 @@ public class ReporteController {
     }
 
     @GetMapping("/ventas/resumen")
+    @PreAuthorize("hasAnyRole('VENTAS','ADMIN')")
     public ResponseEntity<List<ResumenVentaDTO>> resumenVentas(
             @RequestParam(defaultValue = "MENSUAL") PeriodoReporte periodo,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
@@ -136,6 +147,7 @@ public class ReporteController {
     // ---------- Logs ----------
 
     @GetMapping("/logs")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<LogResponseDTO>> logs(
             @RequestParam(required = false) String usuario,
             @RequestParam(required = false) String modulo,

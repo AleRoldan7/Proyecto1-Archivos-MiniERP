@@ -28,4 +28,13 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Intege
             """)
     List<ProductoEntity> buscar(@Param("texto") String texto, @Param("idCategoria") Integer idCategoria, @Param("estado") Boolean estado);
 
+    @Query("""
+            SELECT p FROM ProductoEntity p
+             JOIN FETCH p.categoria c
+             JOIN InventarioEntity i ON i.producto.idProducto = p.idProducto
+            WHERE p.estadoProducto = true
+               AND i.stock > 0
+            ORDER BY p.nombreProducto ASC
+            """)
+    List<ProductoEntity> findDisponiblesParaVenta();
 }

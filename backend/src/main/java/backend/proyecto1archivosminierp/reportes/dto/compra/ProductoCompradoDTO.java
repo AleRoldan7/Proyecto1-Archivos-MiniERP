@@ -13,7 +13,7 @@ public class ProductoCompradoDTO {
 
     private Integer idProducto;
     private String nombreProducto;
-    private Long vecesComprado;        // en cuántas compras distintas aparece
+    private Long vecesComprado;
     private Long unidadesCompradas;
     private BigDecimal montoTotal;
 }

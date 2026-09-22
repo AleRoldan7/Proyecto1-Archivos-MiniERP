@@ -51,4 +51,9 @@ public class ProveedorController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/activar")
+    @PreAuthorize("hasAnyRole('COMPRAS','ADMIN')")
+    public ResponseEntity<ProveedorResponseDTO> activarProveedor(@PathVariable Integer id) {
+        return ResponseEntity.ok(proveedorService.activar(id));
+    }
 }
